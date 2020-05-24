@@ -1,9 +1,14 @@
 package com.my.finger;
 
+import android.content.ContentValues;
+import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Camera;
+import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.SurfaceHolder;
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -13,15 +18,31 @@ import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
+
+import com.my.finger.utils.CommonUtil;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class CameraActivity extends AppCompatActivity {
-
+    private static String TAG = "KDN_TAG";
     private static CameraPreview surfaceView;
     private SurfaceHolder holder;
     private static Camera mCamera;
     private int RESULT_PERMISSIONS = 100;
     public static CameraActivity getInstance;
+    public static boolean layout_visible = false;
+    public static boolean flash_on_off = false;
+    public static byte[] mData;
+    public static String tempFileName;
+    private static Context mContext;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +85,36 @@ public class CameraActivity extends AppCompatActivity {
                         break;
                     case R.id.btnShut:
                         // get an image from the camera
+                        CheckBox checkBox = (CheckBox) findViewById(R.id.set_check);
+                        if (checkBox.isChecked())
+                        {
+                            surfaceView.setName(true);
+                        }else {
+                            surfaceView.setName(false);
+                        }
                         surfaceView.takePicture();
+                        break;
+                    case R.id.btnFlash:
+                        ImageView flash = (ImageView)findViewById(R.id.btnFlash);
+                        if (flash_on_off == false) {
+                            flashLightOn();
+                            flash.setImageResource(R.mipmap.btn_flash_on);
+                            flash_on_off = true;
+                        }else {
+                            flashLightOff();
+                            flash.setImageResource(R.mipmap.btn_flash_off);
+                            flash_on_off = false;
+                        }
+                        break;
+                    case R.id.btnSet:
+                        LinearLayout layout = (LinearLayout)findViewById(R.id.set);
+                        if (layout_visible == false) {
+                            layout.setVisibility(View.VISIBLE);
+                            layout_visible = true;
+                        }else {
+                            layout.setVisibility(View.INVISIBLE);
+                            layout_visible = false;
+                        }
                         break;
                 }
             }
@@ -78,7 +128,82 @@ public class CameraActivity extends AppCompatActivity {
         btnZoom3.setOnClickListener(onClickListener);
         ImageView btnShut = (ImageView)findViewById(R.id.btnShut);
         btnShut.setOnClickListener(onClickListener);
+        ImageView btnFlash = (ImageView)findViewById(R.id.btnFlash);
+        btnFlash.setOnClickListener(onClickListener);
+        ImageView btnSet = (ImageView)findViewById(R.id.btnSet);
+        btnSet.setOnClickListener(onClickListener);
+
+        mContext = this;
+
+        Bundle b = getIntent().getExtras();
+        if(b != null) {
+            if (b.getString("checked").equals("Y"))
+            {
+                // checkbox check
+                CheckBox checkBox = (CheckBox) findViewById(R.id.set_check);
+                checkBox.setChecked(true);
+                surfaceView.setName(true);
+            }
+        }
+
     }
+
+    /**
+     * 핸드폰 Back 버튼 제어
+     */
+    @Override
+    public void onBackPressed() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Log.d(TAG, "onBackPressed called..");
+                mCamera.stopPreview();
+                // your code.
+                Intent intent = new Intent(CameraActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+
+    public static void setByteImage(byte[] data)
+    {
+        FileOutputStream outStream = null;
+        try {
+            Log.d(TAG, "photo: " + mContext.getFilesDir().getAbsolutePath());
+            File path = new File(mContext.getFilesDir().getAbsolutePath() + "/kdnapp");
+            if (!path.exists()) {
+                Log.d(TAG, "디렉토리 생성 : " + mContext.getFilesDir().getAbsolutePath() + "/kdnapp");
+                path.mkdirs();
+            }
+
+            String saveName = CommonUtil.getCurrentDateFormat();;
+            String fileName = String.format("%s.jpg", saveName);
+            File outputFile = new File(path, fileName);
+            Log.d(TAG, "파일 Write");
+            outStream = new FileOutputStream(outputFile);
+            outStream.write(data);
+            outStream.flush();
+            outStream.close();
+            Log.d(TAG, "파일 Write End");
+            tempFileName = outputFile.getAbsolutePath();  // path+"/"+fileName;
+            Log.d(TAG, "파일 생성완료 : ["+data.length+"] =>" + tempFileName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "파일 FileNotFoundException : " + tempFileName);
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.d(TAG, "파일 IOException : " + tempFileName);
+            e.printStackTrace();
+        }
+    }
+    public static void movePreivewImage()
+    {
+        Intent intent = new Intent(mContext, ImagePreivewActivity.class);
+        Bundle b = new Bundle();
+        b.putString("photo", tempFileName);
+        intent.putExtras(b);
+        mContext.startActivity(intent);
+    }
+
     public static Camera getCamera(){
         return mCamera;
     }
@@ -101,6 +226,44 @@ public class CameraActivity extends AppCompatActivity {
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         surfaceView.setHolder(holder);
+    }
+
+    /**
+     * Flash On
+     */
+    public void flashLightOn() {
+        try {
+            if (getPackageManager().hasSystemFeature(
+                    PackageManager.FEATURE_CAMERA_FLASH)) {
+                //mCamera = Camera.open();
+                Camera.Parameters p = mCamera.getParameters();
+                p.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                mCamera.setParameters(p);
+                //mCamera.startPreview();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Exception flashLightOn()",
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /**
+     * Flash Off
+     */
+    public void flashLightOff() {
+        try {
+            if (getPackageManager().hasSystemFeature(
+                    PackageManager.FEATURE_CAMERA_FLASH)) {
+                Camera.Parameters p = mCamera.getParameters();
+                p.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                mCamera.setParameters(p);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getBaseContext(), "Exception flashLightOff",
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     public boolean requestPermissionCamera(){

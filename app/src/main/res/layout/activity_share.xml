@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ShareActivity">
+
+    <LinearLayout
+        android:id="@+id/top_content"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginBottom="5dp"
+        android:background="#00bc78"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent">
+        <TextView
+            android:id="@+id/send_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:gravity="center_horizontal"
+            android:text="사진 공유"
+            android:textSize="25dp"
+            android:textColor="#ffffff" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/date_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="2dp"
+        android:background="#ffff"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/top_content">
+
+        <TextView
+            android:id="@+id/emptyText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:text="기간" />
+
+        <EditText
+            android:id="@+id/txtStDt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="0dp"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:hint="시작  일자"
+            android:inputType="text"
+            android:enabled = "false"
+            app:layout_constraintLeft_toRightOf="@+id/emptyText"/>
+        <ImageView
+            android:id="@+id/btnCal1"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="#000000"
+            android:hint="시작일자"
+            android:src="@mipmap/btn_cal"
+            app:layout_constraintLeft_toRightOf="@+id/txtStDt"/>
+
+        <TextView
+            android:id="@+id/from_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="10dp"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:text=" ~ "
+            app:layout_constraintLeft_toRightOf="@+id/btnCal1"/>
+
+
+        <EditText
+            android:id="@+id/txtEtDt"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="0dp"
+            android:textColor="#000000"
+            android:textSize="18dp"
+            android:hint="종료  일자"
+            android:inputType="text"
+            android:enabled = "false"
+            app:layout_constraintLeft_toRightOf="@+id/from_title"/>
+
+        <ImageView
+            android:id="@+id/btnCal2"
+            android:layout_width="25dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="2dp"
+            android:textColor="#000000"
+            android:hint="시작일자"
+            android:src="@mipmap/btn_cal"
+            app:layout_constraintLeft_toRightOf="@+id/txtEtDt"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/dept_content"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="2dp"
+        android:background="#ffff"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/date_content">
+
+        <Button
+            android:id="@+id/btnDept"
+            android:layout_width="wrap_content"
+            android:layout_height="35dp"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="10dp"
+            android:background="#138e4c"
+            android:textColor="#ffffff"
+            android:textSize="18dp"
+            android:text="부서선택" />
+        <EditText
+            android:id="@+id/txtDept"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="1dp"
+            android:layout_marginBottom="0dp"
+            android:textColor="#000000"
+            android:hint="부서명"
+            android:inputType="text"
+            app:layout_constraintLeft_toRightOf="@+id/btnDept"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/button_content"
+        android:layout_width="fill_parent"
+        android:layout_height="35dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:background="#ffffff"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/dept_content">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+        <Button
+            android:id="@+id/btnMyDept"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#373837"
+            android:textColor="#ffffff"
+            app:layout_constraintHorizontal_chainStyle="packed"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/btnMyPhoto"
+            android:textSize="18dp"
+            android:text="내 부서" />
+        <Button
+            android:id="@+id/btnMyPhoto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="2dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#138e4c"
+            android:textColor="#ffffff"
+            app:layout_constraintRight_toRightOf="parent"
+
+            android:textSize="18dp"
+            android:text="내 사진"
+            app:layout_constraintLeft_toRightOf="@+id/btnMyDept"
+            />
+        </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listShareImageView"
+        app:layout_constraintTop_toBottomOf="@+id/button_content"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent">
+    </ListView>
+
+</android.support.constraint.ConstraintLayout>

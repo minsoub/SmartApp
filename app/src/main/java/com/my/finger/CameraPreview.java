@@ -2,6 +2,7 @@ package com.my.finger;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     private int mDisplayOrientation;
     private Camera.CameraInfo mCameraInfo;
     private DataBaseUtil mDB;
+    private boolean isChecked = false;
 
 
 
@@ -59,6 +61,15 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mDB = new DataBaseUtil(context);
     }
 
+    /**
+     * 사진 이름 지정 체크 여부
+     * ture인 경우 사진 이름을 지정할 수 있도록 다음 페이지로 연결해야 한다.
+     * @param check
+     */
+    public void setName(boolean check)
+    {
+        isChecked = check;
+    }
     public void setHolder(SurfaceHolder holder)
     {
         mHolder = holder;
@@ -93,36 +104,19 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
                 // set the focus mode
                 parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+
+                List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+                Camera.Size optimalSize;
+                optimalSize = getOptimalPreviewSize(sizes, mPreviewSize.width, mPreviewSize.height);
+                parameters.setPictureSize(optimalSize.width, optimalSize.height);
+
                 // set Camera parameters
                 mCamera.setParameters(parameters);
             }
-
-//            // 카메라의 회전이 가로/세로일 때 화면을 설정한다.
-//            if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_LANDSCAPE)
-//            {
-//                parameters.set("orientation", "portrait");
-//                mCamera.setDisplayOrientation(90);
-//                parameters.setRotation(90);
-//            }else {
-//                parameters.set("orientation", "landscape");
-//                mCamera.setDisplayOrientation(0);
-//                parameters.setRotation(0);
-//            }
-//            mCamera.setParameters(parameters);
             mCamera.setPreviewDisplay(surfaceHolder);
 
             // 카메라 미리보기를 시작한다.
             mCamera.startPreview();
-
-
-
-//            mCamera.autoFocus(new Camera.AutoFocusCallback(){
-//                public void onAutoFocus(boolean success, Camera camera) {
-//                    if (success) {
-//
-//                    }
-//                }
-//            });
         }catch(Exception ex)
         {
 
@@ -323,6 +317,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     public void takePicture() {
         mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
     }
+
     Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
         public void onShutter() {
 
@@ -341,8 +336,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         public void onPictureTaken(byte[] data, Camera camera)
         {
             //이미지의 너비와 높이 결정
+            //int w = camera.getParameters().getPreviewSize().width; // getPictureSize().width;
+            //int h = camera.getParameters().getPreviewSize().height;  // getPictureSize().height;
+
             int w = camera.getParameters().getPictureSize().width;
             int h = camera.getParameters().getPictureSize().height;
+
             //int orientation = CameraActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
             int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
 
@@ -363,8 +362,17 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
             byte[] currentData = stream.toByteArray();
 
-            //파일로 저장
-            new SaveImageTask().execute(currentData);
+            if (isChecked == true)
+            {
+                mCamera.stopPreview();
+                mCamera = null;
+
+                CameraActivity.setByteImage(currentData);
+                CameraActivity.movePreivewImage();
+            }else {
+                //파일로 저장
+                new SaveImageTask().execute(currentData);
+            }
         }
     };
 
@@ -393,7 +401,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 SQLiteDatabase db = mDB.getWritableDatabase();
                 ContentValues values = new ContentValues();
                 values.put("id", Long.parseLong(saveName));
-                values.put("filename", path+"/"+fileName);
+                values.put("filename", outputFile.getAbsolutePath());  // path+"/"+fileName);
                 values.put("sts", "N");
                 long id = db.insert("tb_files", null, values);
                 Log.d(TAG, "insert id : " + id);
@@ -401,14 +409,6 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
                 Log.d(TAG, "onPictureTaken - wrote bytes: " + data.length + " to "
                         + outputFile.getAbsolutePath());
-
-                mCamera.startPreview();
-
-//                // 갤러리에 반영
-//                Intent mediaScanIntent = new Intent( Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-//                mediaScanIntent.setData(Uri.fromFile(outputFile));
-//                getContext().sendBroadcast(mediaScanIntent);
-
                 try {
                     mCamera.setPreviewDisplay(mHolder);
                     mCamera.startPreview();

@@ -34,4 +34,18 @@ public class DataBaseUtil extends SQLiteOpenHelper {
     {
         super.onOpen(db);
     }
+
+    /**
+     * 사진 파일을 데이터베이스에서 삭제한다.
+     *
+     * @param key
+     * @return
+     */
+    public int delete(String key)
+    {
+        SQLiteDatabase db = getWritableDatabase();
+        int result = db.delete("tb_files", "id=?", new String[]{key});
+        db.close();
+        return result;
+    }
 }

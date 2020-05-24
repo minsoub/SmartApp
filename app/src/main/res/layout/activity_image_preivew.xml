@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ImagePreivewActivity">
+
+    <com.my.finger.utils.TouchImageView
+        android:id="@+id/previewImage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_marginTop="0dp"
+        android:contentDescription="미리보기"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:scaleType="matrix" />
+
+    <LinearLayout
+        android:id="@+id/set"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:background="#26000000"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TextView
+            android:id="@+id/plant_item_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:gravity="center_horizontal"
+            android:text="사진이름 "
+            android:textColor="#ffffff" />
+
+        <EditText
+            android:id="@+id/txtFileName"
+            android:layout_width="260dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginBottom="3dp" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="#212121"
+            android:text="저장"
+            android:textColor="#ffffff"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </LinearLayout>
+
+
+</android.support.constraint.ConstraintLayout>
