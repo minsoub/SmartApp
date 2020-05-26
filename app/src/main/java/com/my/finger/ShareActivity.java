@@ -2,10 +2,13 @@ package com.my.finger;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -17,6 +20,7 @@ import android.widget.Toast;
 import com.my.finger.adapter.ShareViewAdapter;
 import com.my.finger.data.ImageItem;
 import com.my.finger.data.ShareDataItem;
+import com.my.finger.data.ShareMainItem;
 import com.my.finger.utils.Constant;
 import com.my.finger.utils.SessionUtil;
 
@@ -58,7 +62,7 @@ public class ShareActivity extends AppCompatActivity {
     private Context mContext;
 
     private boolean selectedMode;   //  true : 내사진, false: 내 부서
-    private List<ImageItem> adapterList = new ArrayList<>();
+    private List<ShareMainItem> adapterList = new ArrayList<>();
     private ListView mView;
 
     Calendar myCalendar = Calendar.getInstance();
@@ -171,6 +175,9 @@ public class ShareActivity extends AppCompatActivity {
         adapter = new ShareViewAdapter(mContext, adapterList);
         mView.setAdapter(adapter);
 
+        mView.setTranscriptMode(ListView.TRANSCRIPT_MODE_ALWAYS_SCROLL);
+        mView.setStackFromBottom(true);
+
         populateDataSearch();
     }
 
@@ -241,6 +248,7 @@ public class ShareActivity extends AppCompatActivity {
                     String code = jsonObject.getString("code");
                     Log.d(TAG, "return code : " + code);
 
+                    adapterList.clear();
                     if (code.equals("OK")) {
                         JSONArray rows = jsonObject.getJSONArray("rows");
                         for (int i = 0; i < rows.length(); i++) {
@@ -249,18 +257,26 @@ public class ShareActivity extends AppCompatActivity {
                             JSONArray list = object.getJSONArray("imageShareList");
                             int k= 0;
                             ImageItem item = null;
+                            ShareMainItem mainItem = new ShareMainItem();
+                            List<ImageItem> listItem = new ArrayList<>();
+                            mainItem.rgstYmd = rgstYmd;
                             for (int j = 0; j < list.length(); j++) {
                                 JSONObject obj = list.getJSONObject(j);
                                 ShareDataItem data = new ShareDataItem();
+                                data.rgstYmd = rgstYmd;
                                 data.imageSeqno = obj.getString("imageSeqno");
                                 data.rgstEmpid = obj.getString("rgstEmpid");
                                 data.rgstName = obj.getString("rgstName");
                                 data.oriFileName = obj.getString("oriFileName");
                                 data.logFileName = obj.getString("logFileName");
                                 data.thumbnailFileName = obj.getString("thumbnailFileName");
-                                if (j == 0) data.rgstYmd = rgstYmd;
-                                //Log.d(TAG, data.logFileName);
+                                // bitmap image load
+                                InputStream in = new java.net.URL(data.thumbnailFileName).openStream();
+                                Bitmap bmp = BitmapFactory.decodeStream(in);
+                                data.image = bmp;
+
                                 k++;
+
                                 if (k % 3 ==1) {
                                     item = new ImageItem();
                                     item.item1 = data;
@@ -268,14 +284,16 @@ public class ShareActivity extends AppCompatActivity {
                                     item.item2 = data;
                                 }else if(k % 3 == 0) {
                                     item.item3 = data;
-                                    adapterList.add(item);
+                                    listItem.add(item);
                                     Log.d(TAG, "add => "+ adapterList.size());
                                 }
                             }
                             if (k % 3 != 0)
                             {
-                                if (item != null) adapterList.add(item);
+                                if (item != null) listItem.add(item);
                             }
+                            mainItem.imageList = listItem;
+                            adapterList.add(mainItem);
                         }
                     }else {
                         Log.d(TAG, "data not found...");

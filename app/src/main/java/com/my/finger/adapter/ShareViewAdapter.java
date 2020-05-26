@@ -10,31 +10,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.my.finger.R;
 import com.my.finger.data.ImageItem;
+import com.my.finger.data.ShareMainItem;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ShareViewAdapter extends BaseAdapter{
     private final String TAG = "KDN_TAG";
-    private List<ImageItem> mList;
+    private List<ShareMainItem> mList;
     private Context mContext;
-    public  ImageItem mSelectedDataItem;
+    public  ShareMainItem mSelectedDataItem;
 
-    public ShareViewAdapter(Context context, List<ImageItem> list)
+    public ShareViewAdapter(Context context, List<ShareMainItem> list)
     {
         //super();
         this.mContext = context;
         this.mList = list;
     }
-    public List<ImageItem> getList() {
+    public List<ShareMainItem> getList() {
         return mList;
     }
-    public void setList(List<ImageItem> list)
+    public void setList(List<ShareMainItem> list)
     {
         this.mList = list;
     }
@@ -64,12 +65,7 @@ public class ShareViewAdapter extends BaseAdapter{
 
     private class ViewHolder {
         TextView rgstYmd;
-        ImageView image1;
-        TextView text1;
-        ImageView image2;
-        TextView text2;
-        ImageView image3;
-        TextView text3;
+        ListView listView;
     }
 
     @Override
@@ -80,38 +76,22 @@ public class ShareViewAdapter extends BaseAdapter{
         {
             Log.d(TAG, "getView convertView null...");
             holder = new ViewHolder();
-            convertView = inflater.inflate(R.layout.listview_share, null, true);
-            holder.rgstYmd = (TextView)convertView.findViewById(R.id.rgstYmd);
-            holder.text1 = (TextView)convertView.findViewById(R.id.itemText1);
-            holder.text2 = (TextView)convertView.findViewById(R.id.itemText2);
-            holder.text3 = (TextView)convertView.findViewById(R.id.itemText3);
-            // 이미지
-            holder.image1 = (ImageView) convertView.findViewById(R.id.itemImage1);
-            holder.image2 = (ImageView)convertView.findViewById(R.id.itemImage2);
-            holder.image3 = (ImageView)convertView.findViewById(R.id.itemImage3);
-
+            convertView = inflater.inflate(R.layout.share_main, null, true);
+            holder.rgstYmd = convertView.findViewById(R.id.rgstYmd);
+            holder.listView = convertView.findViewById(R.id.listDetailView);
             convertView.setTag(holder);
         }else {
             holder = (ViewHolder) convertView.getTag();
         }
         mSelectedDataItem = mList.get(position);
 
-        if (mSelectedDataItem.item1 != null) {
-            holder.text1.setText(mSelectedDataItem.item1.imageSeqno);
+        Log.d(TAG, "rgstYmd : " + mSelectedDataItem.rgstYmd);
+        holder.rgstYmd.setText(mSelectedDataItem.rgstYmd);
 
-            new DownloadImageTask(holder.image1).execute(mSelectedDataItem.item1.logFileName);
-            //holder.image1.setImageBitmap(mSelectedDataItem.image1);
-        }
-        if (mSelectedDataItem.item2 != null) {
-            holder.text2.setText(mSelectedDataItem.item2.imageSeqno);
-            new DownloadImageTask(holder.image2).execute(mSelectedDataItem.item2.logFileName);
-            //holder.image2.setImageBitmap(mSelectedDataItem.image2);
-        }
-        if (mSelectedDataItem.item3 != null) {
-            holder.text3.setText(mSelectedDataItem.item3.imageSeqno);
-            new DownloadImageTask(holder.image2).execute(mSelectedDataItem.item2.logFileName);
-            //holder.image3.setImageBitmap(mSelectedDataItem.image3);
-        }
+        ListView share =  holder.listView;
+        ListShareAdapter adapter = new ListShareAdapter(mContext, mSelectedDataItem.imageList);
+        share.setAdapter(adapter);
+
         return convertView;
     }
 
