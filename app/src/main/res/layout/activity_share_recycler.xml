@@ -111,7 +111,7 @@
             android:layout_marginTop="5dp"
             android:layout_marginBottom="2dp"
             android:textColor="#000000"
-            android:hint="종료일자"
+            android:hint="시작일자"
             android:src="@mipmap/btn_cal"
             app:layout_constraintLeft_toRightOf="@+id/txtEtDt"/>
     </LinearLayout>
@@ -136,7 +136,7 @@
             android:background="#138e4c"
             android:textColor="#ffffff"
             android:textSize="18dp"
-            android:text="타부서" />
+            android:text="부서선택" />
         <EditText
             android:id="@+id/txtDept"
             android:layout_width="match_parent"
@@ -164,44 +164,48 @@
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
-        <Button
-            android:id="@+id/btnMyDept"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#373837"
-            android:textColor="#ffffff"
-            app:layout_constraintHorizontal_chainStyle="packed"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@+id/btnMyPhoto"
-            android:textSize="18dp"
-            android:text="내 부서" />
-        <Button
-            android:id="@+id/btnMyPhoto"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="2dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:background="#138e4c"
-            android:textColor="#ffffff"
-            app:layout_constraintRight_toRightOf="parent"
-            android:textSize="18dp"
-            android:text="내 사진"
-            app:layout_constraintLeft_toRightOf="@+id/btnMyDept"
-            />
+            <Button
+                android:id="@+id/btnMyDept"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#373837"
+                android:textColor="#ffffff"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/btnMyPhoto"
+                android:textSize="18dp"
+                android:text="내 부서" />
+            <Button
+                android:id="@+id/btnMyPhoto"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:layout_marginBottom="2dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="#138e4c"
+                android:textColor="#ffffff"
+                app:layout_constraintRight_toRightOf="parent"
+
+                android:textSize="18dp"
+                android:text="내 사진"
+                app:layout_constraintLeft_toRightOf="@+id/btnMyDept"
+                />
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listShareImageView"
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/listShareView"
         app:layout_constraintTop_toBottomOf="@+id/button_content"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent">
-    </ListView>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
 
 </android.support.constraint.ConstraintLayout>

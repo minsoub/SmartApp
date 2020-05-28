@@ -19,10 +19,13 @@
     <LinearLayout
         android:id="@+id/set"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="#26000000"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingTop="10dp"
+        android:background="#56181616"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -39,6 +42,8 @@
             android:id="@+id/txtFileName"
             android:layout_width="260dp"
             android:layout_height="wrap_content"
+            android:textColor="#000000"
+            android:background="#ffffff"
             android:layout_marginLeft="5dp"
             android:layout_marginBottom="3dp" />
 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:id="@+id/relativeLayout2"
+    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:paddingTop="5dp"
+        android:paddingBottom="5dp"
+        android:layout_marginBottom="5dp"
+        >
+        <ImageView
+            android:id="@+id/itemImage1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:scaleType="matrix" />
+        <TextView
+            android:id="@+id/itemText1"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            app:layout_constraintTop_toBottomOf="@+id/itemImage1"
+            app:layout_constraintLeft_toLeftOf="@id/itemImage1"
+            app:layout_constraintRight_toRightOf="@id/itemImage1"
+            android:gravity="center"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:text=""
+            />
+
+        <ImageView
+            android:id="@+id/itemImage2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            app:layout_constraintLeft_toRightOf="@+id/itemImage1"
+            android:scaleType="matrix" />
+        <TextView
+            android:id="@+id/itemText2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="@id/itemImage2"
+            app:layout_constraintRight_toRightOf="@id/itemImage2"
+            app:layout_constraintTop_toBottomOf="@+id/itemImage2"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:text=""
+            />
+
+        <ImageView
+            android:id="@+id/itemImage3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginLeft="5dp"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            app:layout_constraintLeft_toRightOf="@+id/itemImage2"
+            android:scaleType="matrix" />
+        <TextView
+            android:id="@+id/itemText3"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3dp"
+            android:gravity="center"
+            app:layout_constraintLeft_toLeftOf="@id/itemImage3"
+            app:layout_constraintRight_toRightOf="@id/itemImage3"
+            app:layout_constraintTop_toBottomOf="@+id/itemImage3"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:focusable="false"
+            android:text=""
+            />
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

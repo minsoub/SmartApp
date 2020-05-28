@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.media.Image;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -16,6 +17,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -74,10 +76,14 @@ public class ImageDetailActivity extends AppCompatActivity {
             db.close();
 
             // Image 출력
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
             Bitmap bitmap = BitmapFactory.decodeFile(mFileName);
+            Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap, size.x, size.y, true);
 
             view = findViewById(R.id.previewImage);
-            view.setImageBitmap(bitmap);
+            view.setImageBitmap(newbitMap);
 
             // Text 출력
             int pos = mFileName.lastIndexOf(".");

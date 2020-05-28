@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -22,14 +25,16 @@ public class ImagePreivewActivity extends AppCompatActivity  {
     private final String TAG = "KDN_TAG";
     private String mFileName;
     private DataBaseUtil mDB;
-
-
     private TouchImageView view;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_image_preivew);
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
@@ -45,8 +50,11 @@ public class ImagePreivewActivity extends AppCompatActivity  {
             }
 
             Bitmap bitmap = BitmapFactory.decodeFile(mFileName);
+            //int newWidth = metrics.widthPixels;
+            Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap, size.x, size.y, true);
 
-            if (bitmap == null)
+
+            if (newbitMap == null)
             {
                 Log.d(TAG, "bitmap is null");
             }else {
@@ -55,12 +63,7 @@ public class ImagePreivewActivity extends AppCompatActivity  {
             //Drawable drawable = new BitmapDrawable(getResources(), bitmap);
 
             view = (TouchImageView)findViewById(R.id.previewImage);
-            view.setImageBitmap(bitmap);
-            //matrix.setTranslate(1f, 1f);
-            //view.setImageMatrix(matrix);
-            //img.setBitmap(bitmap);
-            //img.setImageDrawable(drawable);
-            Log.d(TAG, "here is now...");
+            view.setImageBitmap(newbitMap);
         }
         Button.OnClickListener onClickListener = new Button.OnClickListener() {
             @Override
@@ -139,6 +142,10 @@ public class ImagePreivewActivity extends AppCompatActivity  {
     @Override
     public void onBackPressed() {
         Log.d(TAG, "onBackPressed");
+        File file = new File(mFileName);
+        if (file.exists())
+            file.delete();
+
         // your code.
         Intent intent = new Intent(ImagePreivewActivity.this, CameraActivity.class);
         Bundle b = new Bundle();

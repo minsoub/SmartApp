@@ -31,6 +31,8 @@ import java.net.URL;
 public class LoginActivity extends AppCompatActivity {
     private final String TAG = "KDN_TAG";
     public boolean isLogin = false;
+    private String id;
+    private String pass;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,7 +48,28 @@ public class LoginActivity extends AppCompatActivity {
                     // 사진 촬영하기
                     case R.id.btnLogin:
                         // 아이디/패스워드 입력 여부 확인
-                        loginProcess();
+                        final EditText idEdit = findViewById(R.id.txtId);
+                        final EditText passEdit = findViewById(R.id.txtPass);
+
+                        if (idEdit.getText() == null || "".equals(idEdit.getText().toString()))
+                        {
+                            Toast.makeText(getBaseContext(), "아이디를 입력하세요!!!",
+                                    Toast.LENGTH_SHORT).show();
+                            idEdit.forceLayout();
+                            return;
+                        }
+                        if (passEdit.getText() == null || "".equals(passEdit.getText().toString()))
+                        {
+                            Toast.makeText(getBaseContext(), "비밀번호를 입력하세요!!!",
+                                    Toast.LENGTH_SHORT).show();
+                            passEdit.forceLayout();
+                            return;
+                        }
+                        id = idEdit.getText().toString();
+                        pass = passEdit.getText().toString();
+
+                        onLoginProcess();
+                        //new LoginProcess().execute(idEdit.getText().toString(), passEdit.getText().toString());
                         break;
                 }
             }
@@ -60,30 +83,17 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * 아이디/패스워드 입력 체크 및 로그인 프로세스를 수행한다.
      */
-    private void loginProcess()
+    private void onLoginProcess()
     {
-        final EditText idEdit = findViewById(R.id.txtId);
-        final EditText passEdit = findViewById(R.id.txtPass);
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected void onPreExecute() {
+                super.onPreExecute();
+            }
 
-        if (idEdit.getText() == null || "".equals(idEdit.getText().toString()))
-        {
-            Toast.makeText(getBaseContext(), "아이디를 입력하세요!!!",
-                    Toast.LENGTH_SHORT).show();
-            idEdit.forceLayout();
-            return;
-        }
-        if (passEdit.getText() == null || "".equals(passEdit.getText().toString()))
-        {
-            Toast.makeText(getBaseContext(), "비밀번호를 입력하세요!!!",
-                    Toast.LENGTH_SHORT).show();
-            passEdit.forceLayout();
-            return;
-        }
-
-        // 아이디/패스워드 입력하였으므로 로그인 절차를 수행한다.
-        new Thread() {
-            public void run() {
-                // All your networking logic should be here
+            @Override
+            protected Void doInBackground(Void... Void) {
+                // 전달된 URL 사용 작업 return total;
                 try{
                     String url = Constant.LOGIN_URL;
                     URL urlObj = new URL(url);
@@ -97,8 +107,8 @@ public class LoginActivity extends AppCompatActivity {
 
                     conn.connect();
                     StringBuilder sbParams = new StringBuilder();
-                    sbParams.append("empid").append("=").append(idEdit.getText().toString());
-                    sbParams.append("&").append("password").append("=").append(passEdit.getText().toString());
+                    sbParams.append("empid").append("=").append(id);
+                    sbParams.append("&").append("password").append("=").append(pass);
                     String paramsString = sbParams.toString();
 
                     DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
@@ -159,10 +169,34 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 } catch (IOException e) {
+                    Toast.makeText(getBaseContext(), "로그인하는데 에러가 발생하였습니다["+e.toString()+"]", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, e.toString());
                     e.printStackTrace();
                 }
+                return null;
             }
-        }.start();
+
+            @Override
+            protected void onProgressUpdate(Void... progress) {
+                // 파일 다운로드 퍼센티지 표시 작업
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+                // doInBackground 에서 받아온 total 값 사용 장소
+            }
+        }.execute();
+//
+//
+//
+//
+//
+//        // 아이디/패스워드 입력하였으므로 로그인 절차를 수행한다.
+//        new Thread() {
+//            public void run() {
+//                // All your networking logic should be here
+//
+//            }
+//        }.start();
     }
 }

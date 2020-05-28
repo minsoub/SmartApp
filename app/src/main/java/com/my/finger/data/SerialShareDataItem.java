@@ -1,9 +1,9 @@
 package com.my.finger.data;
 
-import android.graphics.Bitmap;
+import java.io.Serializable;
 
-public class ShareDataItem  {
-
+public  class SerialShareDataItem  implements Serializable {
+    private static final long serialVersionUID = 1L;
     public String rgstYmd;
     public String imageSeqno;
     public String rgstEmpid;
@@ -12,5 +12,4 @@ public class ShareDataItem  {
     public String oriFileName;
     public String logFileName;
     public String thumbnailFileName;
-    public Bitmap image;
 }

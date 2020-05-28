@@ -1,8 +1,10 @@
 package com.my.finger.data;
 
-import java.util.List;
+
+import java.util.ArrayList;
+
 
 public class ShareMainItem {
     public String rgstYmd;
-    public List<ImageItem> imageList;
+    public ArrayList<ImageItem> imageList;
 }

@@ -105,8 +105,16 @@ public class MainActivity extends AppCompatActivity {
 
         if (isConnected)
         {
-            Intent intent = new Intent(MainActivity.this, SendActivity.class);
-            startActivity(intent);
+            // 로그인 여부
+            if (SessionUtil.empid == null)
+            {
+                // 로그인 페이지 이동
+                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                startActivity(intent);
+            }else {
+                Intent intent = new Intent(MainActivity.this, SendActivity.class);
+                startActivity(intent);
+            }
         }else {
             Toast.makeText(getBaseContext(), "네트워크가 연결되지 않았습니다!!!",
                     Toast.LENGTH_SHORT).show();

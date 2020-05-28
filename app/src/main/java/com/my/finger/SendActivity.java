@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.my.finger.adapter.ListViewAdapter;
@@ -36,6 +37,7 @@ public class SendActivity extends AppCompatActivity {
     private ImageView btnCheckAll;
     private ImageView btnSend;
     private ImageView btnDelete;
+    private TextView txtTitle;
     private ListViewAdapter adapter;
     public ArrayList<FileDataItem> checkList;
     private ProgressDialog dialog = null;
@@ -86,6 +88,16 @@ public class SendActivity extends AppCompatActivity {
                 }
             }
         };
+        TextView.OnClickListener onTextClickListener = new ImageView.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (view.getId()) {
+                    case R.id.send_title:
+                        onBackPressed();
+                        break;
+                }
+            }
+        };
 
         btnCheckAll = findViewById(R.id.radioCheck);
         btnCheckAll.setOnClickListener(onClickListener);
@@ -93,6 +105,9 @@ public class SendActivity extends AppCompatActivity {
         btnSend.setOnClickListener(onClickListener);
         btnDelete = findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(onClickListener);
+
+        txtTitle = findViewById(R.id.send_title);
+        txtTitle.setOnClickListener(onTextClickListener);
     }
 
     /**
