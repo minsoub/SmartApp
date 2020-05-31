@@ -50,6 +50,89 @@ public class CameraActivity extends AppCompatActivity {
         // 안드로이드 6.0 이상 버전에서는 CAMERA 권한 허가를 요청한다.
         requestPermissionCamera();
 
+
+
+    }
+
+    /**
+     * 핸드폰 Back 버튼 제어
+     */
+    @Override
+    public void onBackPressed() {
+        runOnUiThread(new Runnable() {
+            public void run() {
+                Log.d(TAG, "onBackPressed called..");
+                mCamera.stopPreview();
+                // your code.
+                Intent intent = new Intent(CameraActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    public static void setByteImage(byte[] data)
+    {
+        FileOutputStream outStream = null;
+        try {
+            Log.d(TAG, "photo: " + mContext.getFilesDir().getAbsolutePath());
+            File path = new File(mContext.getFilesDir().getAbsolutePath() + "/kdnapp");
+            if (!path.exists()) {
+                Log.d(TAG, "디렉토리 생성 : " + mContext.getFilesDir().getAbsolutePath() + "/kdnapp");
+                path.mkdirs();
+            }
+
+            String saveName = CommonUtil.getCurrentDateFormat();;
+            String fileName = String.format("%s.jpg", saveName);
+            File outputFile = new File(path, fileName);
+            Log.d(TAG, "파일 Write");
+            outStream = new FileOutputStream(outputFile);
+            outStream.write(data);
+            outStream.flush();
+            outStream.close();
+            Log.d(TAG, "파일 Write End");
+            tempFileName = outputFile.getAbsolutePath();  // path+"/"+fileName;
+            Log.d(TAG, "파일 생성완료 : ["+data.length+"] =>" + tempFileName);
+        } catch (FileNotFoundException e) {
+            Log.d(TAG, "파일 FileNotFoundException : " + tempFileName);
+            e.printStackTrace();
+        } catch (IOException e) {
+            Log.d(TAG, "파일 IOException : " + tempFileName);
+            e.printStackTrace();
+        }
+    }
+    public static void movePreivewImage()
+    {
+        Intent intent = new Intent(mContext, ImagePreivewActivity.class);
+        Bundle b = new Bundle();
+        b.putString("photo", tempFileName);
+        intent.putExtras(b);
+        mContext.startActivity(intent);
+    }
+
+    public static Camera getCamera(){
+        return mCamera;
+    }
+
+    private void setInit(){
+        getInstance = this;
+
+        // 카메라 객체를 R.layout.activity_main의 레이아웃에 선언한 SurfaceView에서 먼저 정의해야 함으로 setContentView 보다 먼저 정의한다.
+        mCamera = Camera.open();
+
+        setContentView(R.layout.activity_camera);
+
+        // SurfaceView를 상속받은 레이아웃을 정의한다.
+        surfaceView = (CameraPreview) findViewById(R.id.preview);
+
+        // SurfaceView 정의 - holder와 Callback을 정의한다.
+        holder = surfaceView.getHolder();
+        holder.addCallback(surfaceView);
+        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+
+        surfaceView.setHolder(holder);
+        Log.d(TAG, "setInit called...");
+
+
         //setContentView(R.layout.activity_camera);
         ImageView.OnClickListener onClickListener = new ImageView.OnClickListener()
         {
@@ -136,85 +219,6 @@ public class CameraActivity extends AppCompatActivity {
                 surfaceView.setName(true);
             }
         }
-    }
-
-    /**
-     * 핸드폰 Back 버튼 제어
-     */
-    @Override
-    public void onBackPressed() {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                Log.d(TAG, "onBackPressed called..");
-                mCamera.stopPreview();
-                // your code.
-                Intent intent = new Intent(CameraActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
-    }
-
-    public static void setByteImage(byte[] data)
-    {
-        FileOutputStream outStream = null;
-        try {
-            Log.d(TAG, "photo: " + mContext.getFilesDir().getAbsolutePath());
-            File path = new File(mContext.getFilesDir().getAbsolutePath() + "/kdnapp");
-            if (!path.exists()) {
-                Log.d(TAG, "디렉토리 생성 : " + mContext.getFilesDir().getAbsolutePath() + "/kdnapp");
-                path.mkdirs();
-            }
-
-            String saveName = CommonUtil.getCurrentDateFormat();;
-            String fileName = String.format("%s.jpg", saveName);
-            File outputFile = new File(path, fileName);
-            Log.d(TAG, "파일 Write");
-            outStream = new FileOutputStream(outputFile);
-            outStream.write(data);
-            outStream.flush();
-            outStream.close();
-            Log.d(TAG, "파일 Write End");
-            tempFileName = outputFile.getAbsolutePath();  // path+"/"+fileName;
-            Log.d(TAG, "파일 생성완료 : ["+data.length+"] =>" + tempFileName);
-        } catch (FileNotFoundException e) {
-            Log.d(TAG, "파일 FileNotFoundException : " + tempFileName);
-            e.printStackTrace();
-        } catch (IOException e) {
-            Log.d(TAG, "파일 IOException : " + tempFileName);
-            e.printStackTrace();
-        }
-    }
-    public static void movePreivewImage()
-    {
-        Intent intent = new Intent(mContext, ImagePreivewActivity.class);
-        Bundle b = new Bundle();
-        b.putString("photo", tempFileName);
-        intent.putExtras(b);
-        mContext.startActivity(intent);
-    }
-
-    public static Camera getCamera(){
-        return mCamera;
-    }
-
-    private void setInit(){
-        getInstance = this;
-
-        // 카메라 객체를 R.layout.activity_main의 레이아웃에 선언한 SurfaceView에서 먼저 정의해야 함으로 setContentView 보다 먼저 정의한다.
-        mCamera = Camera.open();
-
-        setContentView(R.layout.activity_camera);
-
-        // SurfaceView를 상속받은 레이아웃을 정의한다.
-        surfaceView = (CameraPreview) findViewById(R.id.preview);
-
-        // SurfaceView 정의 - holder와 Callback을 정의한다.
-        holder = surfaceView.getHolder();
-        holder.addCallback(surfaceView);
-        holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-
-        surfaceView.setHolder(holder);
-        Log.d(TAG, "setInit called...");
     }
 
     /**
