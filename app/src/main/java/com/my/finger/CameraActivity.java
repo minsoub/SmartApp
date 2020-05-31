@@ -1,11 +1,8 @@
 package com.my.finger;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteDatabase;
 import android.hardware.Camera;
-import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -19,7 +16,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -47,19 +43,14 @@ public class CameraActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         //setContentView(R.layout.activity_camera);
-
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
-
-
         // 안드로이드 6.0 이상 버전에서는 CAMERA 권한 허가를 요청한다.
         requestPermissionCamera();
 
         //setContentView(R.layout.activity_camera);
-
         ImageView.OnClickListener onClickListener = new ImageView.OnClickListener()
         {
             @Override
@@ -145,7 +136,6 @@ public class CameraActivity extends AppCompatActivity {
                 surfaceView.setName(true);
             }
         }
-
     }
 
     /**
@@ -163,7 +153,6 @@ public class CameraActivity extends AppCompatActivity {
             }
         });
     }
-
 
     public static void setByteImage(byte[] data)
     {
@@ -219,13 +208,13 @@ public class CameraActivity extends AppCompatActivity {
         // SurfaceView를 상속받은 레이아웃을 정의한다.
         surfaceView = (CameraPreview) findViewById(R.id.preview);
 
-
         // SurfaceView 정의 - holder와 Callback을 정의한다.
         holder = surfaceView.getHolder();
         holder.addCallback(surfaceView);
         holder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
 
         surfaceView.setHolder(holder);
+        Log.d(TAG, "setInit called...");
     }
 
     /**
@@ -275,7 +264,6 @@ public class CameraActivity extends AppCompatActivity {
                 ActivityCompat.requestPermissions(CameraActivity.this,
                         new String[]{Manifest.permission.CAMERA},
                         RESULT_PERMISSIONS);
-
             }else {
                 setInit();
             }

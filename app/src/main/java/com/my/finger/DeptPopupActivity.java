@@ -2,15 +2,10 @@ package com.my.finger;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-//import android.view.Menu;
-//import android.view.MenuItem;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -22,11 +17,7 @@ import android.widget.Toast;
 
 import com.my.finger.adapter.DirectoryNodeBinder;
 import com.my.finger.adapter.FileNodeBinder;
-import com.my.finger.data.DeptItem;
 import com.my.finger.data.DeptTopItem;
-import com.my.finger.data.ImageItem;
-import com.my.finger.data.ShareDataItem;
-import com.my.finger.data.ShareMainItem;
 import com.my.finger.utils.Constant;
 
 import org.json.JSONArray;
@@ -36,13 +27,13 @@ import org.json.JSONObject;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import com.my.finger.R;
 
 import tellh.com.recyclertreeview_lib.TreeNode;
 import tellh.com.recyclertreeview_lib.TreeViewAdapter;
@@ -54,6 +45,7 @@ public class DeptPopupActivity extends Activity {
     private RecyclerView rv;
     private TreeViewAdapter adapter;
     private Button mbtnSelect;
+    private ImageView mbtnExit;
     private TextView prevSelect = null;
     private final String TAG = "KDN_TAG";
     private String mSelectedDeptCd;
@@ -64,11 +56,14 @@ public class DeptPopupActivity extends Activity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-         setContentView(R.layout.activity_dept_popup);
+        // 부서 레이아웃 XML : activity_dept_popup.xml
+        setContentView(R.layout.activity_dept_popup);
 
         rv = findViewById(R.id.rv);
 
         mbtnSelect = findViewById(R.id.btnConfirm);
+        mbtnExit = findViewById(R.id.btnExit);
+
         Button.OnClickListener onClickListener = new Button.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,12 +71,21 @@ public class DeptPopupActivity extends Activity {
                     case R.id.btnConfirm:
                         deptCodeSelect();
                         break;
+                    case R.id.btnExit:
+                        userClose();
+                        break;
                 }
             }
         };
         mbtnSelect.setOnClickListener(onClickListener);
-
+        mbtnExit.setOnClickListener(onClickListener);
         initData();
+    }
+    private void userClose()
+    {
+        Intent intent = new Intent();
+        setResult(RESULT_CANCELED, intent);
+        finish();
     }
     private void deptCodeSelect()
     {

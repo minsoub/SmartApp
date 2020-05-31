@@ -31,7 +31,7 @@ import java.util.List;
  * 카메라 Preview 구현 클래스
  */
 public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
-    private final String TAG = "CameraPreview";
+    private final String TAG = "KDN_TAG";
     private Camera mCamera;
     public List<Camera.Size> mSupportedPreviewSizes;
     private Camera.Size mPreviewSize;
@@ -101,22 +101,24 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
             // 자동 포커스 설정
             List<String> focusModes = parameters.getSupportedFocusModes();
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_AUTO)) {
+            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                 // set the focus mode
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-
-                List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
-                Camera.Size optimalSize;
-                optimalSize = getOptimalPreviewSize(sizes, mPreviewSize.width, mPreviewSize.height);
-                parameters.setPictureSize(optimalSize.width, optimalSize.height);
-
-                // set Camera parameters
-                mCamera.setParameters(parameters);
+                // parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             }
+            List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
+            Camera.Size optimalSize;
+            optimalSize = getOptimalPreviewSize(sizes, mPreviewSize.width, mPreviewSize.height);
+            parameters.setPictureSize(optimalSize.width, optimalSize.height);
+
+            // set Camera parameters
+            mCamera.setParameters(parameters);
             mCamera.setPreviewDisplay(surfaceHolder);
 
             // 카메라 미리보기를 시작한다.
             mCamera.startPreview();
+
+            Log.d(TAG, "surfaceCreated called...");
         }catch(Exception ex)
         {
 
@@ -147,9 +149,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera.setDisplayOrientation(orientation);
 
             try {
+                // focus 조절
+                parameters.setZoom(5);
+                if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                }
+                mCamera.setParameters(parameters);
+
                 mCamera.setPreviewDisplay(mHolder);
                 mCamera.startPreview();
-                Log.d(TAG, "Camera preview started.");
+                Log.d(TAG, "surfaceChanged Camera preview started.");
             } catch (Exception e) {
                 Log.d(TAG, "Error starting camera preview: " + e.getMessage());
             }
@@ -245,7 +254,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
     public Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
 
-        final double ASPECT_TOLERANCE = 0.1;
+        final double ASPECT_TOLERANCE = 0.05;
         double targetRatio = (double) h / w;
 
         if (sizes == null)
@@ -388,7 +397,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                     path.mkdirs();
                 }
 
-                String saveName = CommonUtil.getCurrentDateFormat();
+                String saveName = CommonUtil.getCurrentDayFormat();
                 String fileName = String.format("%s.jpg", saveName);  // System.currentTimeMillis());
                 File outputFile = new File(path, fileName);
 

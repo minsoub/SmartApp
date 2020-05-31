@@ -6,16 +6,24 @@
     android:layout_height="match_parent"
     tools:context="com.my.finger.ImageDetailActivity">
 
-    <com.my.finger.utils.TouchImageView
-        android:id="@+id/previewImage"
-        android:layout_width="match_parent"
+    <ViewFlipper android:id="@+id/flipper"
+        android:layout_width="fill_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="0dp"
-        android:contentDescription="미리보기"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
-        app:layout_constraintTop_toBottomOf="@+id/top_content"
-        android:scaleType="matrix" />
+        app:layout_constraintTop_toBottomOf="@+id/top_content">
+    </ViewFlipper>
+
+    <!--<com.my.finger.utils.TouchImageView-->
+        <!--android:id="@+id/previewImage"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_marginTop="0dp"-->
+        <!--android:contentDescription="미리보기"-->
+        <!--android:layout_centerHorizontal="true"-->
+        <!--android:layout_centerVertical="true"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/top_content"-->
+        <!--android:scaleType="matrix" />-->
 
     <LinearLayout
         android:id="@+id/top_content"

@@ -12,11 +12,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.my.finger.SendActivity;
 import com.my.finger.ShareActivity;
 import com.my.finger.data.ImageItem;
 import com.my.finger.R;
-import com.my.finger.data.ShareMainItem;
 
 import java.util.List;
 

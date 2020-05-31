@@ -1,6 +1,7 @@
 package com.my.finger;
 
 import android.app.DatePickerDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -42,13 +43,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
+/**
+ * 사진 공유 Activity Class
+ */
 public class ShareActivity extends AppCompatActivity {
     private final String TAG = "KDN_TAG";
     private Button btnDept;         // 부서선택 버튼
@@ -66,7 +70,6 @@ public class ShareActivity extends AppCompatActivity {
     private String searchText;
     private String searchType;
     private String pageNo = "1";
-    private boolean isData;
     private ShareRecycleAdapter adapter;
     private Context mContext;
 
@@ -75,7 +78,7 @@ public class ShareActivity extends AppCompatActivity {
     private ArrayList<ShareSerializeItem> bundleList;
     private RecyclerView mView;
     private DisplayMetrics metrics = new DisplayMetrics();
-
+    private ProgressDialog dialog = null;
 
     Calendar myCalendar = Calendar.getInstance();
 
@@ -115,14 +118,53 @@ public class ShareActivity extends AppCompatActivity {
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            bundleList = (ArrayList<ShareSerializeItem>) savedInstanceState.get("prevData");
-        }
-
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.KOREA);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_recycler);
+        st_dt = findViewById(R.id.txtStDt);
+        et_dt = findViewById(R.id.txtEtDt);
 
-        selectedMode = 1;        // 내 사진
+        Bundle b = getIntent().getExtras();     // ShareDatailActiviy에서 받아온다.
+
+        if (b != null) {
+            Log.d(TAG, "savedInstanceState not null.........");
+
+            bundleList = (ArrayList<ShareSerializeItem>) b.get("prevData");
+            searchStDt = b.getString("searchStDt");
+            searchEndDt = b.getString("searchEndDt");
+            searchText = b.getString("searchText");
+            searchType = b.getString("searchType");
+            Log.d(TAG, "savedInstanceState searchStDt........."+searchStDt);
+            Log.d(TAG, "savedInstanceState searchEndDt........."+searchEndDt);
+            Log.d(TAG, "savedInstanceState searchText........."+searchText);
+            Log.d(TAG, "savedInstanceState searchType........."+searchType);
+            if (searchType != null && !"".equals(searchType))
+            {
+                if (searchType.equals("id"))
+                {
+                    selectedMode = 1;        // 내 사진
+                }else {
+                    selectedMode = 2;        // 내 부서
+                }
+            }
+            // 시작일자/종료일자 기본 세팅 (일주일 전 ~ 현재)
+            SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd", Locale.KOREA);
+            try {
+                st_dt.setText(sdf.format(df.parse(searchStDt)));
+                et_dt.setText(sdf.format(df.parse(searchEndDt)));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+        }else {
+            selectedMode = 1;        // 내 사진
+            // 시작일자/종료일자 기본 세팅 (일주일 전 ~ 현재)
+            et_dt.setText(sdf.format(new Date()));
+
+            Calendar cal = Calendar.getInstance();
+            cal.add(Calendar.DATE, -3);
+            st_dt.setText(sdf.format(cal.getTime()));
+        }
+
 
         Button.OnClickListener onClickListener = new Button.OnClickListener() {
             @Override
@@ -173,17 +215,6 @@ public class ShareActivity extends AppCompatActivity {
                 }
             }
         };
-
-        // 시작일자/종료일자 기본 세팅 (일주일 전 ~ 현재)
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd", Locale.KOREA);
-        et_dt = findViewById(R.id.txtEtDt);
-        et_dt.setText(sdf.format(new Date()));
-
-        Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -3);
-
-        st_dt = findViewById(R.id.txtStDt);
-        st_dt.setText(sdf.format(cal.getTime()));
 
         // Button click event
         btnDept = findViewById(R.id.btnDept);
@@ -251,7 +282,6 @@ public class ShareActivity extends AppCompatActivity {
      */
     private void  populateDataSearch()
     {
-
         getWindowManager().getDefaultDisplay().getMetrics(metrics);
 
         if (txtDeptCd == null || "".equals(txtDeptCd))
@@ -290,6 +320,7 @@ public class ShareActivity extends AppCompatActivity {
         if (bundleList != null)
         {
             //TODO: 번들에 있는 데이터를 AdapterList에 넣고 이미지를 로드해야 한다.
+            dialog = ProgressDialog.show(ShareActivity.this, "", "Loading Image file...", true);
             try {
                 for (int i = 0; i < bundleList.size(); i++) {
                     ShareSerializeItem item = bundleList.get(i);
@@ -312,13 +343,14 @@ public class ShareActivity extends AppCompatActivity {
                         m1.rgstName = a1.item1.rgstName;
                         m1.rgstEmpid = a1.item1.rgstEmpid;
                         // bitmap image load
+                        Log.d(TAG, "thumbnailFileName 1 : " + m1.thumbnailFileName);
                         InputStream in = new java.net.URL(m1.thumbnailFileName).openStream();
                         Bitmap bmp = BitmapFactory.decodeStream(in);
                         int newWidth = metrics.widthPixels / 3 - 15;
                         Bitmap newbitMap = Bitmap.createScaledBitmap(bmp, newWidth, newWidth, true);
                         m1.image = newbitMap;
 
-                        if (a1.item2 != null) {
+                        if (a1.item2.thumbnailFileName != null) {
                             m2.imageSeqno = a1.item2.imageSeqno;
                             m2.logFileName = a1.item2.logFileName;
                             m2.oriFileName = a1.item2.oriFileName;
@@ -328,6 +360,7 @@ public class ShareActivity extends AppCompatActivity {
                             m2.rgstName = a1.item2.rgstName;
                             m2.rgstEmpid = a1.item2.rgstEmpid;
                             // bitmap image load
+                            Log.d(TAG, "thumbnailFileName 2 : " + m2.thumbnailFileName);
                             InputStream in2 = new java.net.URL(m2.thumbnailFileName).openStream();
                             Bitmap bmp2 = BitmapFactory.decodeStream(in2);
                             int newWidth2 = metrics.widthPixels / 3 - 15;
@@ -335,7 +368,7 @@ public class ShareActivity extends AppCompatActivity {
                             m2.image = newbitMap2;
                         }
 
-                        if (a1.item3 != null) {
+                        if (a1.item3.thumbnailFileName != null) {
                             m3.imageSeqno = a1.item3.imageSeqno;
                             m3.logFileName = a1.item3.logFileName;
                             m3.oriFileName = a1.item3.oriFileName;
@@ -345,6 +378,7 @@ public class ShareActivity extends AppCompatActivity {
                             m3.rgstName = a1.item3.rgstName;
                             m3.rgstEmpid = a1.item3.rgstEmpid;
                             // bitmap image load
+                            Log.d(TAG, "thumbnailFileName 3 : " + m3.thumbnailFileName);
                             InputStream in3 = new java.net.URL(m3.thumbnailFileName).openStream();
                             Bitmap bmp3 = BitmapFactory.decodeStream(in3);
                             int newWidth3 = metrics.widthPixels / 3 - 15;
@@ -377,9 +411,12 @@ public class ShareActivity extends AppCompatActivity {
             }catch(Exception ex) {
                 Toast.makeText(getBaseContext(), "조회하는데 에러가 발생하였습니다["+ex.toString()+"]", Toast.LENGTH_SHORT).show();
                 ex.printStackTrace();
+            }finally {
+                dialog.dismiss();
             }
         }else {
             // 데이터를 조회한다.
+            dialog = ProgressDialog.show(ShareActivity.this, "", "Loading Image file...", true);
             new Thread() {
                 public void run() {
                     // All your networking logic should be here
@@ -504,6 +541,8 @@ public class ShareActivity extends AppCompatActivity {
                         Toast.makeText(getBaseContext(), "조회하는데 에러가 발생하였습니다["+e.toString()+"]", Toast.LENGTH_SHORT).show();
                         Log.d(TAG, e.toString());
                         e.printStackTrace();
+                    }finally {
+                        dialog.dismiss();
                     }
                 }
             }.start();
@@ -522,6 +561,11 @@ public class ShareActivity extends AppCompatActivity {
         Bundle b = new Bundle();
         b.putString("imageKey", url);
         b.putString("title", title);
+        b.putSerializable("prevData", getSerializeData());
+        b.putString("searchStDt", searchStDt);
+        b.putString("searchEndDt", searchEndDt);
+        b.putString("searchText", searchText);
+        b.putString("searchType", searchType);
         intent.putExtras(b);
         startActivity(intent);
     }
@@ -537,6 +581,66 @@ public class ShareActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    private ArrayList<ShareSerializeItem> getSerializeData()
+    {
+        ArrayList<ShareSerializeItem> prevData = new ArrayList<>();
+
+        for (int i=0; i<adapterList.size(); i++)
+        {
+            ShareMainItem item = adapterList.get(i);
+            ShareSerializeItem st = new ShareSerializeItem();
+            st.rgstYmd = item.rgstYmd;
+            ArrayList<SerialImageItem> list = new ArrayList<>();
+
+            for (int j=0; j<item.imageList.size(); j++)
+            {
+                ImageItem a1 = item.imageList.get(j);
+                SerialImageItem s1 = new SerialImageItem();
+                SerialShareDataItem m1 = new SerialShareDataItem();
+                SerialShareDataItem m2 = new SerialShareDataItem();
+                SerialShareDataItem m3 = new SerialShareDataItem();
+                m1.imageSeqno = a1.item1.imageSeqno;
+                m1.logFileName = a1.item1.logFileName;
+                m1.oriFileName = a1.item1.oriFileName;
+                m1.rgstDeptCd = a1.item1.rgstDeptCd;
+                m1.thumbnailFileName = a1.item1.thumbnailFileName;
+                m1.rgstYmd = a1.item1.rgstYmd;
+                m1.rgstName = a1.item1.rgstName;
+                m1.rgstEmpid = a1.item1.rgstEmpid;
+
+                if (a1.item2 != null) {
+                    m2.imageSeqno = a1.item2.imageSeqno;
+                    m2.logFileName = a1.item2.logFileName;
+                    m2.oriFileName = a1.item2.oriFileName;
+                    m2.rgstDeptCd = a1.item2.rgstDeptCd;
+                    m2.thumbnailFileName = a1.item2.thumbnailFileName;
+                    m2.rgstYmd = a1.item2.rgstYmd;
+                    m2.rgstName = a1.item2.rgstName;
+                    m2.rgstEmpid = a1.item2.rgstEmpid;
+                }
+                if (a1.item3 != null) {
+                    m3.imageSeqno = a1.item3.imageSeqno;
+                    m3.logFileName = a1.item3.logFileName;
+                    m3.oriFileName = a1.item3.oriFileName;
+                    m3.rgstDeptCd = a1.item3.rgstDeptCd;
+                    m3.thumbnailFileName = a1.item3.thumbnailFileName;
+                    m3.rgstYmd = a1.item3.rgstYmd;
+                    m3.rgstName = a1.item3.rgstName;
+                    m3.rgstEmpid = a1.item3.rgstEmpid;
+                }
+
+                s1.item1 = m1;
+                s1.item2 = m2;
+                s1.item3 = m3;
+
+                list.add(s1);
+            }
+            st.imageList = list;
+            prevData.add(st);
+        }
+
+        return prevData;
+    }
     @Override
     protected void onSaveInstanceState(Bundle outState) {
 
@@ -597,6 +701,10 @@ public class ShareActivity extends AppCompatActivity {
         }
         // bitmap을 제거해야 한다.
         outState.putSerializable("prevData", prevData);
+        outState.putString("searchStDt", searchStDt);
+        outState.putString("searchEndDt", searchEndDt);
+        outState.putString("searchText", searchText);
+        outState.putString("searchType", searchType);
         //outState.put
         super.onSaveInstanceState(outState);
     }

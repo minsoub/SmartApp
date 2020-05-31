@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -213,4 +214,30 @@ public class MainActivity extends AppCompatActivity {
         return size;
     }
 
+    /**
+     * 핸드폰 Back 버튼 제어
+     */
+    @Override
+    public void onBackPressed() {
+        Log.d(TAG, "onBackPressed called..");
+
+        new AlertDialog.Builder(this)
+                .setTitle("종료확인")
+                .setMessage("프로그램 종료 하시겠습니까?")
+                //.setIcon(R.mipmap.btn_close_pop)
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        closeProgram();
+                    }})
+                .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        // 취소시 처리 로직
+                    }})
+                .show();
+    }
+    private void closeProgram()
+    {
+        ActivityCompat.finishAffinity(this);
+        System.exit(0);
+    }
 }

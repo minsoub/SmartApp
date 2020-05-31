@@ -167,7 +167,7 @@ public class SendActivity extends AppCompatActivity {
                 new AlertDialog.Builder(this)
                         .setTitle("파일전송")
                         .setMessage("선택한 파일을 전송하시겠습니까?")
-                        .setIcon(R.mipmap.btn_del01)
+                        .setIcon(R.mipmap.btn_send01)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialogInterface, int whichButton) {
                                 dialog = ProgressDialog.show(SendActivity.this, "", "Uploading file...", true);
@@ -225,7 +225,7 @@ public class SendActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    if (item.isChecked2) {
+                    if (item.isChecked2 && item.file2 != null) {
                         Log.d(TAG, "파일 업로드 isChecked2 =>" + item.file2+ ", text : " + item.text2);
                         Constant.ReturnCode result = upload.fileUpload(item.file2);
                         if (result == Constant.ReturnCode.http201) {
@@ -245,7 +245,7 @@ public class SendActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    if (item.isChecked3) {
+                    if (item.isChecked3 && item.file3 != null) {
                         Log.d(TAG, "파일 업로드 isChecked3 =>" + item.file3 + ", text : " + item.text3);
                         Constant.ReturnCode result = upload.fileUpload(item.file3);
                         if (result == Constant.ReturnCode.http201) {
@@ -313,6 +313,7 @@ public class SendActivity extends AppCompatActivity {
                 if (item.isChecked2 == true) count++;
                 if (item.isChecked3 == true) count++;
             }
+            Log.d(TAG, "delect count : " + count);
             if (count == 0)
             {
                 Toast.makeText(getBaseContext(), "삭제를 위해서 사진을 체크하세요!!!", Toast.LENGTH_SHORT).show();
@@ -323,27 +324,39 @@ public class SendActivity extends AppCompatActivity {
                         .setIcon(R.mipmap.btn_del01)
                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {
+                                Log.d(TAG, "Loop count : " + checkList.size());
                                 for (int i=0; i<checkList.size(); i++) {
                                     // 확인시 처리 로직
                                     FileDataItem item = checkList.get(i);
-                                    if (item.isChecked1) {
+                                    if (item.isChecked1 && item.file1 != null) {
+                                        Log.d(TAG, "delete file key : " + item.text1);
+                                        Log.d(TAG, "delete file name : " + item.file1);
                                         int result = mDB.delete(item.text1);
+                                        Log.d(TAG, "DB result : " + result);
                                         // 파일 삭제
                                         File file = new File(item.file1);
                                         if (file.exists()) {
                                             file.delete();
                                         }
-                                    }else if(item.isChecked2)
+                                    }
+                                    if(item.isChecked2 && item.file2 != null)
                                     {
+                                        Log.d(TAG, "delete file key : " + item.text2);
+                                        Log.d(TAG, "delete file name : " + item.file2);
                                         int result = mDB.delete(item.text2);
+                                        Log.d(TAG, "DB result : " + result);
                                         // 파일 삭제
                                         File file = new File(item.file2);
                                         if (file.exists()) {
                                             file.delete();
                                         }
-                                    }else if(item.isChecked3)
+                                    }
+                                    if(item.isChecked3 && item.file3 != null)
                                     {
+                                        Log.d(TAG, "delete file key : " + item.text3);
+                                        Log.d(TAG, "delete file name : " + item.file3);
                                         int result = mDB.delete(item.text3);
+                                        Log.d(TAG, "DB result : " + result);
                                         // 파일 삭제
                                         File file = new File(item.file3);
                                         if (file.exists()) {
@@ -351,6 +364,7 @@ public class SendActivity extends AppCompatActivity {
                                         }
                                     }
                                 }
+                                Log.d(TAG, "job completed....");
                                 // 작업이 완료되었으면..
                                 // 리스트를 다시 읽어 들어야 한다.
                                 runOnUiThread(new Runnable() {
