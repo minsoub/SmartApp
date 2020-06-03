@@ -114,8 +114,8 @@ public class ListViewAdapter extends BaseAdapter {
         if (mSelectedDataItem.text1 != null) {
             holder.text1.setText(mSelectedDataItem.text1);
             holder.image1.setImageBitmap(mSelectedDataItem.image1);
-            holder.image1.setTag(mSelectedDataItem.text1);
-            holder.radio1.setTag(mSelectedDataItem.text1);
+            holder.image1.setTag(mSelectedDataItem.key1);
+            holder.radio1.setTag(mSelectedDataItem.key1);
             if (mSelectedDataItem.isChecked1) {
                 holder.radio1.setImageResource(R.mipmap.obj_chck_on);
             }else {
@@ -127,8 +127,8 @@ public class ListViewAdapter extends BaseAdapter {
         if (mSelectedDataItem.text2 != null) {
             holder.text2.setText(mSelectedDataItem.text2);
             holder.image2.setImageBitmap(mSelectedDataItem.image2);
-            holder.image2.setTag(mSelectedDataItem.text2);
-            holder.radio2.setTag(mSelectedDataItem.text2);
+            holder.image2.setTag(mSelectedDataItem.key2);
+            holder.radio2.setTag(mSelectedDataItem.key2);
             if (mSelectedDataItem.isChecked2) {
                 holder.radio2.setImageResource(R.mipmap.obj_chck_on);
             }else {
@@ -140,8 +140,8 @@ public class ListViewAdapter extends BaseAdapter {
         if (mSelectedDataItem.text3 != null) {
             holder.text3.setText(mSelectedDataItem.text3);
             holder.image3.setImageBitmap(mSelectedDataItem.image3);
-            holder.image3.setTag(mSelectedDataItem.text3);
-            holder.radio3.setTag(mSelectedDataItem.text3);
+            holder.image3.setTag(mSelectedDataItem.key3);
+            holder.radio3.setTag(mSelectedDataItem.key3);
             if (mSelectedDataItem.isChecked3) {
                 holder.radio3.setImageResource(R.mipmap.obj_chck_on);
             }else {

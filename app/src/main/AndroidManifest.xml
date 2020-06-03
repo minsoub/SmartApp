@@ -38,12 +38,12 @@
         <activity
             android:name=".CameraActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".ImagePreivewActivity" />
-        <activity android:name=".SendActivity" />
-        <activity android:name=".ImageDetailActivity" />
-        <activity android:name=".LoginActivity" />
-        <activity android:name=".ShareActivity" />
-        <activity android:name=".ShareDetailActivity" />
+        <activity android:name=".ImagePreivewActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".SendActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ImageDetailActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".LoginActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ShareActivity" android:screenOrientation="portrait"/>
+        <activity android:name=".ShareDetailActivity" android:screenOrientation="portrait"/>
         <activity android:name=".DeptPopupActivity" android:theme="@android:style/Theme.DeviceDefault.Light.Dialog" ></activity>
     </application>
 

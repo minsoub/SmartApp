@@ -220,7 +220,7 @@ public class SendActivity extends AppCompatActivity {
                         } else {
                             dialog.dismiss();
                             Log.d(TAG, "Got Exception : see logcat ");
-                            Toast.makeText(SendActivity.this, "업로드에 실패하였습니다. 관리자에게 문의하시기 바랍니다!!! ", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(SendActivity.this, "업로드에 실패하였습니다. 관리자에게 문의하시기 바랍니다!!! ", Toast.LENGTH_SHORT).show();
                             serverResponseCode = -1;
                             break;
                         }
@@ -240,7 +240,7 @@ public class SendActivity extends AppCompatActivity {
                         } else {
                             dialog.dismiss();
                             Log.d(TAG, "Got Exception : see logcat ");
-                            Toast.makeText(SendActivity.this, "업로드에 실패하였습니다. 관리자에게 문의하시기 바랍니다!!! ", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(SendActivity.this, "업로드에 실패하였습니다. 관리자에게 문의하시기 바랍니다!!! ", Toast.LENGTH_SHORT).show();
                             serverResponseCode = -1;
                             break;
                         }
@@ -260,7 +260,7 @@ public class SendActivity extends AppCompatActivity {
                         } else {
                              dialog.dismiss();
                              Log.d(TAG, "Got Exception : see logcat ");
-                             Toast.makeText(SendActivity.this, "업로드에 실패하였습니다. 관리자에게 문의하시기 바랍니다!!! ", Toast.LENGTH_SHORT).show();
+                             //Toast.makeText(SendActivity.this, "업로드에 실패하였습니다. 관리자에게 문의하시기 바랍니다!!! ", Toast.LENGTH_SHORT).show();
                              serverResponseCode = -1;
                              break;
                         }
@@ -279,7 +279,14 @@ public class SendActivity extends AppCompatActivity {
                     });
                 }else {
                     Log.d(TAG, "dialog dismiss...");
-                    dialog.dismiss();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            dialog.dismiss();
+                            Log.d(TAG, "파일 업로드 실패");
+                            Toast.makeText(SendActivity.this, "업로드를 실패하였습니다!!! 관리자에게 문의해주시기 바랍니다!!!",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
                 runOnUiThread(new Runnable() {
                     public void run() {
@@ -410,23 +417,29 @@ public class SendActivity extends AppCompatActivity {
             String filename = cursor.getString(1);
             String sts = cursor.getString(2);
             // Log.d(TAG, "fileName : " + filename);
+            int pos = filename .lastIndexOf(".");
+            String _fileName = filename.substring(filename.lastIndexOf("/")+1, pos);
+
             i++;
             if (i % 3 ==1) {
                 map = new FileDataItem();
-                map.text1 = String.valueOf(id);
+                map.text1 = String.valueOf(_fileName);
                 map.image1 = getAdjustSize(filename);
                 map.file1 = filename;
+                map.key1 = String.valueOf(id);
                 map.isChecked1 = false;
             }else if(i % 3 == 2) {
-                map.text2 = String.valueOf(id);
+                map.text2 = String.valueOf(_fileName);
                 map.image2 = getAdjustSize(filename);
                 map.file2 = filename;
+                map.key2 = String.valueOf(id);
                 map.isChecked2 = false;
             }else if(i % 3 == 0)
             {
-                map.text3 = String.valueOf(id);
+                map.text3 = String.valueOf(_fileName);
                 map.image3 = getAdjustSize(filename);
                 map.file3 = filename;
+                map.key3 = String.valueOf(id);
                 map.isChecked3 = false;
                 list.add(map);
             }
@@ -458,7 +471,7 @@ public class SendActivity extends AppCompatActivity {
 
             if (bitmap1 == null) return bitmap1;
 
-            int newWidth = metrics.widthPixels / 3 - 20;
+            int newWidth = metrics.widthPixels / 3 - 15;
 
             Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap1, newWidth, newWidth, true);
 

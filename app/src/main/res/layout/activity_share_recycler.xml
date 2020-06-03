@@ -136,7 +136,7 @@
             android:background="#138e4c"
             android:textColor="#ffffff"
             android:textSize="18dp"
-            android:text="부서선택" />
+            android:text="타부서" />
         <EditText
             android:id="@+id/txtDept"
             android:layout_width="match_parent"

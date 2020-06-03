@@ -16,7 +16,7 @@ public class CommonUtil {
     {
         Date now = new Date();
 
-        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmssSSS");
+        SimpleDateFormat format = new SimpleDateFormat("MMddHHmmss");
         return format.format(now);
     }
 }

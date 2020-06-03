@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Point;
+import android.os.AsyncTask;
 import android.os.StrictMode;
 import android.support.v7.app.AlertDialog;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import java.util.ArrayList;
 public class ShareDetailActivity extends Activity implements View.OnTouchListener{
     private String mKey;
     private String mTitle;
+    private String mOriFileName;
     private TouchImageView view;
     private ProgressDialog dialog = null;
     private final String TAG = "KDN_TAG";
@@ -67,8 +69,9 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
-            mKey = b.getString("imageKey");  // url
-            mTitle = b.getString("title");  // seqno
+            mKey = b.getString( "seqno");  // "imageKey");  // url
+            mTitle = b.getString("seqno");   // seqno
+            mOriFileName = b.getString("oriFileName");
             bundleList = (ArrayList<ShareSerializeItem>) b.get("prevData");
             searchStDt = b.getString("searchStDt");
             searchEndDt = b.getString("searchEndDt");
@@ -79,7 +82,9 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
             viewFlipper.setOnTouchListener(this);
 
             mtxtView = findViewById(R.id.send_title);
-            mtxtView.setText(mTitle);
+
+            Log.d(TAG, "origin filename : " + mOriFileName);
+            mtxtView.setText(mOriFileName);
             Log.d(TAG, "mKey : " + mKey);
             Log.d(TAG, "mTitle : " + mTitle);
         }
@@ -99,6 +104,7 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
         ImageView btnDelete = findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(onClickListener);
 
+
         imageFlipperLoad();
     }
 
@@ -116,103 +122,27 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
             case MotionEvent.ACTION_UP:
                 float finalX = event.getX();
                 if (xAtDown > finalX) {   // 왼쪽
-                    //if (viewFlipper.getDisplayedChild() == 1)
-                    //    break;
+                    if (viewFlipper.getDisplayedChild() == (filekey.size()-1))
+                        break;
                     viewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_left));
                     viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_left));
                     viewFlipper.showNext();
-                    mtxtView.setText(filekey.get(viewFlipper.getDisplayedChild()).toString());
                     mKey = filekey.get(viewFlipper.getDisplayedChild()).toString();
-//                    mFileName = filename.get(viewFlipper.getDisplayedChild()).toString();
+                    mtxtView.setText(filename.get(viewFlipper.getDisplayedChild()).toString());
+
                 } else {   // 오른쪽
-                    //if (viewFlipper.getDisplayedChild() == 0)
-                    //    break;
+                    if (viewFlipper.getDisplayedChild() == 0)
+                        break;
                     viewFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.in_from_right));
                     viewFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.out_from_right));
                     viewFlipper.showPrevious();
-                    mtxtView.setText(filekey.get(viewFlipper.getDisplayedChild()).toString());
                     mKey = filekey.get(viewFlipper.getDisplayedChild()).toString();
-//                    mFileName = filename.get(viewFlipper.getDisplayedChild()).toString();
+                    mtxtView.setText(filename.get(viewFlipper.getDisplayedChild()).toString());
                 }
                 break;
         }
         return true;
     }
-
-    private void imageFlipperLoad()
-    {
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        dialog = ProgressDialog.show(ShareDetailActivity.this, "", "Loading Image file...", true);
-        try {
-            int index = 0;
-            int found = 0;
-            filename = new ArrayList();
-            filekey = new ArrayList();
-            for (int i = 0; i < bundleList.size(); i++) {
-                ShareSerializeItem item = bundleList.get(i);
-                for (int j = 0; j < item.imageList.size(); j++) {
-                    SerialImageItem  data = item.imageList.get(j);
-
-                    // bitmap image load
-                    InputStream in = new java.net.URL(data.item1.thumbnailFileName).openStream();
-                    Bitmap bmp = BitmapFactory.decodeStream(in);
-                    Bitmap bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
-                    filekey.add(data.item1.imageSeqno);
-                    setFlipperImage(bitmap, data.item1.imageSeqno);
-                    Log.d(TAG, mTitle+"=="+data.item1.imageSeqno);
-                    if (data.item1.imageSeqno.equals(mTitle)) {
-                        found = index;
-                        Log.d(TAG, "found 1 index : " + index);
-                    }
-                    if (data.item2.thumbnailFileName != null)
-                    {
-                        index++;
-                        in = new java.net.URL(data.item2.thumbnailFileName).openStream();
-                        bmp = BitmapFactory.decodeStream(in);
-                        bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
-                        filekey.add(data.item2.imageSeqno);
-                        setFlipperImage(bitmap, data.item2.imageSeqno);
-                        Log.d(TAG, mTitle+"=="+data.item2.imageSeqno);
-                        if (data.item2.imageSeqno.equals(mTitle)) {
-                            found = index;
-                            Log.d(TAG, "found 2 index : " + index);
-                        }
-                    }
-                    if (data.item3.thumbnailFileName != null)
-                    {
-                        index++;
-                        in = new java.net.URL(data.item3.thumbnailFileName).openStream();
-                        bmp = BitmapFactory.decodeStream(in);
-                        bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
-                        filekey.add(data.item3.imageSeqno);
-                        setFlipperImage(bitmap, data.item3.imageSeqno);
-                        Log.d(TAG, mTitle+"=="+data.item3.imageSeqno);
-                        if (data.item3.imageSeqno.equals(mTitle)) {
-                            found = index;
-                            Log.d(TAG, "found 3 index : " + index);
-                        }
-                    }
-                    index++;
-                }
-            }
-            Log.d(TAG, "found index : " + found);
-            viewFlipper.setDisplayedChild(found);
-        }catch(Exception ex) {
-            Toast.makeText(getBaseContext(), "이미지를 가져오는데 에러가 발생하였습니다["+ex.toString()+"]", Toast.LENGTH_SHORT).show();
-            ex.printStackTrace();
-        }finally {
-            dialog.dismiss();
-        }
-    }
-
-    /**
-     * Flipper에 ImageView를 생성해서 추가한다.
-     *
-     * @param bitmap
-     * @param filekey
-     */
     private void setFlipperImage(Bitmap bitmap, String filekey)
     {
         ImageView image = new ImageView(getApplicationContext());
@@ -220,6 +150,110 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
         image.setTag(filekey);
         viewFlipper.addView(image);
     }
+
+    private int delFlipperImage(String key)
+    {
+        int found = -1;
+        for (int i=0; i<filekey.size(); i++)
+        {
+            if (filekey.get(i).toString().equals(key))
+            {
+                found = i;
+                break;
+            }
+        }
+        viewFlipper.removeViewAt(found);
+        filekey.remove(found);
+        return found;
+    }
+
+    private void imageFlipperLoad()
+    {
+        Log.d(TAG, "imageFlipperLoad called...");
+
+        dialog = ProgressDialog.show(ShareDetailActivity.this, "", "Loading Image file...", true);
+
+
+                Display display = getWindowManager().getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+
+                try {
+                    int index = 0;
+                    int found = 0;
+                    filename = new ArrayList();
+                    filekey = new ArrayList();
+                    for (int i = 0; i < bundleList.size(); i++) {
+                        ShareSerializeItem item = bundleList.get(i);
+                        for (int j = 0; j < item.imageList.size(); j++) {
+                            SerialImageItem data = item.imageList.get(j);
+
+                            // bitmap image load
+                            InputStream in = new java.net.URL(data.item1.logFileName).openStream();
+                            Bitmap bmp = BitmapFactory.decodeStream(in);
+                            Bitmap bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
+                            filekey.add(data.item1.imageSeqno);
+                            filename.add(data.item1.oriFileName);
+                            setFlipperImage(bitmap, data.item1.imageSeqno);
+                            Log.d(TAG, mTitle + "==" + data.item1.imageSeqno);
+                            if (data.item1.imageSeqno.equals(mTitle)) {
+                                found = index;
+                                Log.d(TAG, "found 1 index : " + index);
+                            }
+                            if (data.item2.logFileName != null) {
+                                index++;
+                                in = new java.net.URL(data.item2.logFileName).openStream();
+                                bmp = BitmapFactory.decodeStream(in);
+                                bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
+                                filekey.add(data.item2.imageSeqno);
+                                filename.add(data.item2.oriFileName);
+                                setFlipperImage(bitmap, data.item2.imageSeqno);
+                                Log.d(TAG, mTitle + "==" + data.item2.imageSeqno);
+                                if (data.item2.imageSeqno.equals(mTitle)) {
+                                    found = index;
+                                    Log.d(TAG, "found 2 index : " + index);
+                                }
+                            }
+                            if (data.item3.logFileName != null) {
+                                index++;
+                                in = new java.net.URL(data.item3.logFileName).openStream();
+                                bmp = BitmapFactory.decodeStream(in);
+                                bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
+                                filekey.add(data.item3.imageSeqno);
+                                filename.add(data.item3.oriFileName);
+                                setFlipperImage(bitmap, data.item3.imageSeqno);
+                                Log.d(TAG, mTitle + "==" + data.item3.imageSeqno);
+                                if (data.item3.imageSeqno.equals(mTitle)) {
+                                    found = index;
+                                    Log.d(TAG, "found 3 index : " + index);
+                                }
+                            }
+                            index++;
+                        }
+                    }
+                    Log.d(TAG, "found index : " + found);
+                    viewFlipper.setDisplayedChild(found);
+                } catch (Exception ex) {
+                    //Toast.makeText(getBaseContext(), "이미지를 가져오는데 에러가 발생하였습니다[" + ex.toString() + "]", Toast.LENGTH_SHORT).show();
+                    ex.printStackTrace();
+                } finally {
+                    dialog.dismiss();
+                }
+    }
+
+//    /**
+//     * Flipper에 ImageView를 생성해서 추가한다.
+//     *
+//     * @param bitmap
+//     * @param filekey
+//     */
+//    private void setFlipperImage(Bitmap bitmap, String filekey)
+//    {
+//        ImageView image = new ImageView(getApplicationContext());
+//        image.setImageBitmap(bitmap);
+//        image.setTag(filekey);
+//        viewFlipper.addView(image);
+//    }
     /**
      * 이미지를 삭제한다. 파일에서 삭제하고 데이터베이스에서도 삭제한다.
      *
@@ -251,22 +285,23 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
             public void run() {
                 // All your networking logic should be here
                 try {
+                    StringBuilder sbParams = new StringBuilder();
+                    sbParams.append("empid").append("=").append(SessionUtil.empid);
+                    sbParams.append("&").append("imageSeqno").append("=").append(mKey);
+                    String paramsString = sbParams.toString();
+                    Log.d(TAG, "Parameter : " + sbParams.toString());
+
+
                     String url = Constant.DELETE_URL;
                     URL urlObj = new URL(url);
                     HttpURLConnection conn = (HttpURLConnection) urlObj.openConnection();
                     conn.setDoOutput(true);
                     conn.setRequestMethod("POST");
                     conn.setRequestProperty("Accept-Charset", "UTF-8");
-
                     conn.setReadTimeout(10000);
                     conn.setConnectTimeout(15000);
-
                     conn.connect();
-                    StringBuilder sbParams = new StringBuilder();
-                    sbParams.append("empid").append("=").append(SessionUtil.empid);
-                    sbParams.append("&").append("imageSeqno").append("=").append(mTitle);
-                    String paramsString = sbParams.toString();
-                    Log.d(TAG, "Parameter : " + sbParams.toString());
+
                     DataOutputStream wr = new DataOutputStream(conn.getOutputStream());
                     wr.writeBytes(paramsString);
                     wr.flush();
@@ -292,7 +327,23 @@ public class ShareDetailActivity extends Activity implements View.OnTouchListene
                             public void run() {
                                 Toast.makeText(getBaseContext(), "삭제를 완료하였습니다!!!",
                                         Toast.LENGTH_SHORT).show();
-                                onBackPressed();
+
+                                int result = delFlipperImage(mKey);
+                                result = result +1;
+                                if (result <= (filekey.size()-1))
+                                {
+                                    viewFlipper.setDisplayedChild(result);
+                                }else {
+                                    result = result - 1;
+                                    if (result >= 0)
+                                    {
+                                        viewFlipper.setDisplayedChild(result);
+                                    }else {
+                                        onBackPressed();
+                                    }
+                                }
+                                //onBackPressed();
+
                                 //Intent intent = new Intent(ShareDetailActivity.this, ShareActivity.class);
                                 //startActivity(intent);
                             }

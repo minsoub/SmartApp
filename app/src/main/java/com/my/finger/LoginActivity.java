@@ -1,6 +1,9 @@
 package com.my.finger;
 
+import android.content.ContentValues;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.my.finger.utils.Constant;
+import com.my.finger.utils.DataBaseUtil;
 import com.my.finger.utils.SessionUtil;
 
 import java.io.BufferedInputStream;
@@ -33,10 +37,17 @@ public class LoginActivity extends AppCompatActivity {
     public boolean isLogin = false;
     private String id;
     private String pass;
+    private DataBaseUtil mDB;
+    private EditText idEdit;
+    private EditText passEdit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        idEdit = findViewById(R.id.txtId);
+        passEdit = findViewById(R.id.txtPass);
 
         Button.OnClickListener onClickListener = new ImageView.OnClickListener()
         {
@@ -48,9 +59,6 @@ public class LoginActivity extends AppCompatActivity {
                     // 사진 촬영하기
                     case R.id.btnLogin:
                         // 아이디/패스워드 입력 여부 확인
-                        final EditText idEdit = findViewById(R.id.txtId);
-                        final EditText passEdit = findViewById(R.id.txtPass);
-
                         if (idEdit.getText() == null || "".equals(idEdit.getText().toString()))
                         {
                             Toast.makeText(getBaseContext(), "아이디를 입력하세요!!!",
@@ -78,6 +86,27 @@ public class LoginActivity extends AppCompatActivity {
         Button btnLogin = findViewById(R.id.btnLogin);
         btnLogin.setOnClickListener(onClickListener);
 
+        mDB = new DataBaseUtil(this);
+        SQLiteDatabase db = mDB.getWritableDatabase();
+        db.execSQL(
+                "CREATE TABLE IF NOT EXISTS tb_users (id text primary key, login_dt text)"
+        );
+
+        String sql = "select id from tb_users";
+        Cursor cursor = db.rawQuery(sql, null);
+
+        cursor.moveToFirst();
+        if (cursor.isAfterLast() == false)
+        {
+            String id = cursor.getString(0);
+            if (id != null)
+            {
+                idEdit.setText(id);  // 마지막 로그인한 아이디
+            }
+            cursor.moveToNext();
+        }
+        cursor.close();
+        db.close();
     }
 
     /**
@@ -159,6 +188,35 @@ public class LoginActivity extends AppCompatActivity {
                     runOnUiThread(new Runnable() {
                         public void run() {
                             if (isLogin == true) {
+                                // Storage save
+                                SQLiteDatabase db = mDB.getWritableDatabase();
+                                int found = 0;
+                                String sql = "select id from tb_users";
+                                Cursor cursor = db.rawQuery(sql, null);
+
+                                cursor.moveToFirst();
+                                if (cursor.isAfterLast() == false)
+                                {
+                                    String id = cursor.getString(0);
+                                    if (id != null)
+                                    {
+                                        found = 1;
+                                    }
+                                    cursor.moveToNext();
+                                }
+                                cursor.close();
+
+                                if (found == 1) {
+                                    ContentValues values = new ContentValues();
+                                    values.put("id", SessionUtil.empid);
+                                    long id = db.update("tb_users", values, null,null);
+                                }else {
+                                    ContentValues values = new ContentValues();
+                                    values.put("id", SessionUtil.empid);
+                                    long id = db.insert("tb_users", null, values);
+                                }
+                                db.close();
+                                mDB.close();
                                 Toast.makeText(getBaseContext(), SessionUtil.name + "[" + SessionUtil.empid + "]님 로그인", Toast.LENGTH_SHORT).show();
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                                 startActivity(intent);
@@ -186,17 +244,5 @@ public class LoginActivity extends AppCompatActivity {
                 // doInBackground 에서 받아온 total 값 사용 장소
             }
         }.execute();
-//
-//
-//
-//
-//
-//        // 아이디/패스워드 입력하였으므로 로그인 절차를 수행한다.
-//        new Thread() {
-//            public void run() {
-//                // All your networking logic should be here
-//
-//            }
-//        }.start();
     }
 }

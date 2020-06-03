@@ -15,6 +15,9 @@ public class FileDataItem {
     public String file1;
     public String file2;
     public String file3;
+    public String key1;
+    public String key2;
+    public String key3;
 
     public String toString()
     {

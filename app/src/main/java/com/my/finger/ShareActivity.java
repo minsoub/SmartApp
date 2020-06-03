@@ -43,6 +43,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -482,7 +484,7 @@ public class ShareActivity extends AppCompatActivity {
                                     data.imageSeqno = obj.getString("imageSeqno");
                                     data.rgstEmpid = obj.getString("rgstEmpid");
                                     data.rgstName = obj.getString("rgstName");
-                                    data.oriFileName = obj.getString("oriFileName");
+                                    data.oriFileName = URLDecoder.decode(obj.getString("oriFileName"), "utf-8");
                                     data.logFileName = obj.getString("logFileName");
                                     data.thumbnailFileName = obj.getString("thumbnailFileName");
                                     // bitmap image load
@@ -554,13 +556,14 @@ public class ShareActivity extends AppCompatActivity {
      *
      * @param url
      */
-    public void setMoveDetailImage(String url, String title)
+    public void setMoveDetailImage(String url, String seqno, String oriFileName)
     {
         Log.d(TAG, "setMoveDetailImage call : " + url);
         Intent intent = new Intent(ShareActivity.this, ShareDetailActivity.class);
         Bundle b = new Bundle();
         b.putString("imageKey", url);
-        b.putString("title", title);
+        b.putString("seqno", seqno);
+        b.putString("oriFileName", oriFileName);
         b.putSerializable("prevData", getSerializeData());
         b.putString("searchStDt", searchStDt);
         b.putString("searchEndDt", searchEndDt);

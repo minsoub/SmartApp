@@ -41,15 +41,15 @@ public class ShareItemAdapter  extends RecyclerView.Adapter<ShareItemAdapter.Hor
     public void onBindViewHolder(@NonNull HorizontalViewHolder horizontalViewHolder, int i) {
         if (mDataList.get(i).item1 != null) {
             horizontalViewHolder.image1.setImageBitmap(mDataList.get(i).item1.image);
-            horizontalViewHolder.text1.setText(mDataList.get(i).item1.imageSeqno);
+            horizontalViewHolder.text1.setText(mDataList.get(i).item1.oriFileName);
         }
         if (mDataList.get(i).item2 != null) {
             horizontalViewHolder.image2.setImageBitmap(mDataList.get(i).item2.image);
-            horizontalViewHolder.text2.setText(mDataList.get(i).item2.imageSeqno);
+            horizontalViewHolder.text2.setText(mDataList.get(i).item2.oriFileName);
         }
         if (mDataList.get(i).item3 != null) {
             horizontalViewHolder.image3.setImageBitmap(mDataList.get(i).item3.image);
-            horizontalViewHolder.text3.setText(mDataList.get(i).item3.imageSeqno);
+            horizontalViewHolder.text3.setText(mDataList.get(i).item3.oriFileName);
         }
     }
 
@@ -83,7 +83,7 @@ public class ShareItemAdapter  extends RecyclerView.Adapter<ShareItemAdapter.Hor
                     int pos = getAdapterPosition();     // Item Position
                     String imgUrl = mDataList.get(pos).item1.logFileName;
                     Log.d(TAG, "Detail View : " + imgUrl);
-                    ((ShareActivity)mContext).setMoveDetailImage(imgUrl, mDataList.get(pos).item1.imageSeqno);
+                    ((ShareActivity)mContext).setMoveDetailImage(imgUrl, mDataList.get(pos).item1.imageSeqno, mDataList.get(pos).item1.oriFileName);
                 }
             });
             image2.setOnClickListener(new View.OnClickListener() {
@@ -93,7 +93,7 @@ public class ShareItemAdapter  extends RecyclerView.Adapter<ShareItemAdapter.Hor
                     int pos = getAdapterPosition();     // Item Position
                     String imgUrl = mDataList.get(pos).item2.logFileName;
                     Log.d(TAG, "Detail View : " + imgUrl);
-                    ((ShareActivity)mContext).setMoveDetailImage(imgUrl, mDataList.get(pos).item2.imageSeqno);
+                    ((ShareActivity)mContext).setMoveDetailImage(imgUrl, mDataList.get(pos).item2.imageSeqno, mDataList.get(pos).item2.oriFileName);
                 }
             });
             image3.setOnClickListener(new View.OnClickListener() {
@@ -103,7 +103,7 @@ public class ShareItemAdapter  extends RecyclerView.Adapter<ShareItemAdapter.Hor
                     int pos = getAdapterPosition();     // Item Position
                     String imgUrl = mDataList.get(pos).item3.logFileName;
                     Log.d(TAG, "Detail View : " + imgUrl);
-                    ((ShareActivity)mContext).setMoveDetailImage(imgUrl, mDataList.get(pos).item3.imageSeqno);
+                    ((ShareActivity)mContext).setMoveDetailImage(imgUrl, mDataList.get(pos).item3.imageSeqno, mDataList.get(pos).item3.oriFileName);
                 }
             });
         }

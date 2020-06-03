@@ -20,6 +20,10 @@ public class DataBaseUtil extends SQLiteOpenHelper {
         db.execSQL(
                 "CREATE TABLE IF NOT EXISTS tb_files (id integer primary key, filename text, sts integer)"
         );
+
+        db.execSQL(
+                "CREATE TABLE IF NOT EXISTS tb_users (id text primary key, login_dt text)"
+        );
     }
 
     @Override
