@@ -111,6 +111,9 @@ public class MainActivity extends AppCompatActivity {
             {
                 // 로그인 페이지 이동
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Bundle b = new Bundle();
+                b.putString("nextPage", "SEND");
+                intent.putExtras(b);
                 startActivity(intent);
             }else {
                 Intent intent = new Intent(MainActivity.this, SendActivity.class);
@@ -142,6 +145,9 @@ public class MainActivity extends AppCompatActivity {
             {
                 // 로그인 페이지 이동
                 Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Bundle b = new Bundle();
+                b.putString("nextPage", "SHARE");
+                intent.putExtras(b);
                 startActivity(intent);
             }else {
                 Intent intent = new Intent(MainActivity.this, ShareActivity.class);

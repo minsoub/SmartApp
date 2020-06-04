@@ -118,7 +118,7 @@ public class SendActivity extends AppCompatActivity {
     public void setMoveDetailImage(String imageKey)
     {
         Log.d(TAG, "setMoveDetailImage call : " + imageKey);
-        Intent intent = new Intent(SendActivity.this, ImageDetailActivity.class);
+        Intent intent = new Intent(SendActivity.this, ImageDetailPagerActivity.class);
         Bundle b = new Bundle();
         b.putString("imageKey", imageKey);
         intent.putExtras(b);

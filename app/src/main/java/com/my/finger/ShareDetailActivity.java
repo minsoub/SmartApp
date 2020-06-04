@@ -39,6 +39,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * Not use class
+ */
 public class ShareDetailActivity extends Activity implements View.OnTouchListener{
     private String mKey;
     private String mTitle;

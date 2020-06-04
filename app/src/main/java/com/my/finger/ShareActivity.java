@@ -319,6 +319,8 @@ public class ShareActivity extends AppCompatActivity {
         searchStDt = st_dt.getText().toString().replace("/", "").replace("/", "");
         searchEndDt = et_dt.getText().toString().replace("/", "").replace("/", "");
 
+        bundleList = null;
+
         if (bundleList != null)
         {
             //TODO: 번들에 있는 데이터를 AdapterList에 넣고 이미지를 로드해야 한다.
@@ -559,7 +561,8 @@ public class ShareActivity extends AppCompatActivity {
     public void setMoveDetailImage(String url, String seqno, String oriFileName)
     {
         Log.d(TAG, "setMoveDetailImage call : " + url);
-        Intent intent = new Intent(ShareActivity.this, ShareDetailActivity.class);
+        //Intent intent = new Intent(ShareActivity.this, ShareDetailActivity.class);
+        Intent intent = new Intent(ShareActivity.this, SharePagerActivity.class);
         Bundle b = new Bundle();
         b.putString("imageKey", url);
         b.putString("seqno", seqno);

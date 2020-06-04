@@ -40,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
     private DataBaseUtil mDB;
     private EditText idEdit;
     private EditText passEdit;
+    private String mPage = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
 
         idEdit = findViewById(R.id.txtId);
         passEdit = findViewById(R.id.txtPass);
+        Bundle b = getIntent().getExtras();
+        mPage = b.getString( "nextPage");
 
         Button.OnClickListener onClickListener = new ImageView.OnClickListener()
         {
@@ -218,7 +221,19 @@ public class LoginActivity extends AppCompatActivity {
                                 db.close();
                                 mDB.close();
                                 Toast.makeText(getBaseContext(), SessionUtil.name + "[" + SessionUtil.empid + "]님 로그인", Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+
+                                Intent intent = null;
+                                if (mPage == null) {
+                                    intent = new Intent(LoginActivity.this, MainActivity.class);
+                                }else {
+                                    if (mPage.equals("SEND"))
+                                    {
+                                        intent = new Intent(LoginActivity.this, SendActivity.class);
+                                    }else if(mPage.equals("SHARE"))
+                                    {
+                                        intent = new Intent(LoginActivity.this, ShareActivity.class);
+                                    }
+                                }
                                 startActivity(intent);
                             } else {
                                 // ?? nothing
