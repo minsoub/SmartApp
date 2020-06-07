@@ -37,6 +37,8 @@ public class UploadUtil {
     {
         this.pictureFileName = pictureFileName;
         File uploadFile = new File(pictureFileName);
+//        int pos = pictureFileName .lastIndexOf(".");
+//        String fileName = pictureFileName.substring(pictureFileName.lastIndexOf("/")+1, pos);
 
         if (uploadFile.exists()) {
             Log.d(TAG, "fileUpload function called..");
@@ -50,15 +52,15 @@ public class UploadUtil {
                 conn.setDoOutput(true);
                 conn.setUseCaches(false);
                 conn.setRequestMethod("POST");
-
                 conn.setRequestProperty("Connection","Keep-Alive");
+                conn.setRequestProperty("Accept-Charset", "UTF-8");
                 conn.setRequestProperty("Content-Type","multipart/form-data;boundary="+boundary);
                 conn.connect();
                 dataStream = new DataOutputStream(conn.getOutputStream());
 
                 writeFormField("empid", empid);
                 writeFormField("deptCd", deptCd);
-                writeFileField("files", pictureFileName, "image/jpg", fileInputStream);
+                writeFileField("files", pictureFileName,"image/jpg", fileInputStream);
                 dataStream.writeBytes(twoHyphens + boundary + twoHyphens + CRLF);
 
                 fileInputStream.close();

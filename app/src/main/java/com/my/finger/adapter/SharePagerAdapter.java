@@ -6,6 +6,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.support.annotation.NonNull;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,9 +27,11 @@ import java.util.ArrayList;
  * SharePagerActivity class에서 사용하는 Adapter 클래스
  */
 public class SharePagerAdapter  extends PagerAdapter {
+    private final String TAG = "KDN_TAG";
     private Context mContext = null ;
     private ArrayList<ShareDataItem> mList = null;
     private Display mDisplay = null;
+    private View mCurrentView = null;
 
     public SharePagerAdapter(Context context)
     {
@@ -43,6 +47,22 @@ public class SharePagerAdapter  extends PagerAdapter {
     {
         mDisplay = display;
     }
+
+//    public void setItemIndex(int position) {
+//
+//        ((ViewPager)mCurrentView).setCurrentItem(position);
+//        ((SharePagerActivity)mContext).setCurrentImage(mList.get(position).oriFileName, mList.get(position).imageSeqno, position);
+//    }
+//
+//    public View getCurrentView()
+//    {
+//        return mCurrentView;
+//    }
+//    @Override
+//    public void setPrimaryItem(ViewGroup container, int position, Object object) {
+//        mCurrentView = (View)object;
+//        ((SharePagerActivity)mContext).setCurrentImage(mList.get(position).oriFileName, mList.get(position).imageSeqno, position);
+//    }
 
     @NonNull
     @Override
@@ -60,13 +80,15 @@ public class SharePagerAdapter  extends PagerAdapter {
 
             InputStream in = null;
             try {
+                //position = position - 1;
+                Log.d(TAG, "instantiateItem postion => "+position);
                 in = new java.net.URL(mList.get(position).logFileName).openStream();
                 Bitmap bmp = BitmapFactory.decodeStream(in);
                 Bitmap bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
                 imageView.setImageBitmap(bitmap);
 
                 // Textbox에 넣을 타이틀과 버튼 명령시 삭제할 키, 삭제이후 index제거를 위한 position을 넘겨준다.
-                ((SharePagerActivity)mContext).setCurrentImage(mList.get(position).oriFileName, mList.get(position).imageSeqno, position);
+               // ((SharePagerActivity)mContext).setCurrentImage(mList.get(position).oriFileName, mList.get(position).imageSeqno, position);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -101,4 +123,6 @@ public class SharePagerAdapter  extends PagerAdapter {
     public boolean isViewFromObject(@NonNull View view, @NonNull Object o) {
         return (view == (View)o);
     }
+
+
 }

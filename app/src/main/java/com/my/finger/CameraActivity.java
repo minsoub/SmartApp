@@ -1,5 +1,8 @@
 package com.my.finger;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
@@ -27,7 +30,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class CameraActivity extends AppCompatActivity {
+public class CameraActivity extends AppCompatActivity implements LifecycleObserver  {
     private static String TAG = "KDN_TAG";
     private static CameraPreview surfaceView;
     private SurfaceHolder holder;
@@ -49,11 +52,7 @@ public class CameraActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         // 안드로이드 6.0 이상 버전에서는 CAMERA 권한 허가를 요청한다.
         requestPermissionCamera();
-
-
-
     }
-
     /**
      * 핸드폰 Back 버튼 제어
      */
@@ -68,6 +67,28 @@ public class CameraActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    //@OnLifecycleEvent(Lifecycle.Event.ON_RESUME)
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.d(TAG, "initializeCamera called...");
+        mCamera = null;
+        if (mCamera == null) {
+            setInit();
+            //mCamera = Camera.open();
+        }
+    }
+
+    // @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.d(TAG, "releaseCamera called...");
+//        if (mCamera != null) {
+//            mCamera.release();
+//            mCamera = null;
+//        }
     }
 
     public static void setByteImage(byte[] data)
@@ -114,6 +135,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void setInit(){
+        Log.d(TAG, "setInit called...");
         getInstance = this;
 
         // 카메라 객체를 R.layout.activity_main의 레이아웃에 선언한 SurfaceView에서 먼저 정의해야 함으로 setContentView 보다 먼저 정의한다.
@@ -139,6 +161,13 @@ public class CameraActivity extends AppCompatActivity {
             @Override
             public void onClick(View view)
             {
+                if (mCamera == null) {
+                    Log.d(TAG, "Camera is null");
+                    mCamera.open();
+                }else {
+                    Log.d(TAG, "Camera is not null");
+                }
+
                 Camera.Parameters params;
                 switch (view.getId())
                 {
@@ -149,7 +178,7 @@ public class CameraActivity extends AppCompatActivity {
                         break;
                     case R.id.btnZoom2:
                         params=mCamera.getParameters();
-                        params.setZoom(5);
+                        params.setZoom(10);
                         mCamera.setParameters(params);
                         break;
                     case R.id.btnZoom3:

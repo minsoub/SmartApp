@@ -1,5 +1,8 @@
 package com.my.finger;
 
+import android.arch.lifecycle.Lifecycle;
+import android.arch.lifecycle.LifecycleObserver;
+import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
@@ -30,7 +33,7 @@ import java.util.List;
 /**
  * 카메라 Preview 구현 클래스
  */
-public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback {
+public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback{
     private final String TAG = "KDN_TAG";
     private Camera mCamera;
     public List<Camera.Size> mSupportedPreviewSizes;
@@ -74,6 +77,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     {
         mHolder = holder;
     }
+
+
 
     /**
      * SurfaceView 생성시 호출

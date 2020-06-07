@@ -210,7 +210,7 @@ public class SendActivity extends AppCompatActivity {
                         Constant.ReturnCode result = upload.fileUpload(item.file1);
                         if (result == Constant.ReturnCode.http201) {
                             Log.d(TAG, "파일 업로드 완료 =>" + item.file1);
-                            mDB.delete(item.text1);
+                            mDB.delete(item.key1);
                             // 파일 삭제
                             File file = new File(item.file1);
                             if (file.exists()) {
@@ -230,7 +230,7 @@ public class SendActivity extends AppCompatActivity {
                         Constant.ReturnCode result = upload.fileUpload(item.file2);
                         if (result == Constant.ReturnCode.http201) {
                             Log.d(TAG, "파일 업로드 완료  =>" + item.file2);
-                            mDB.delete(item.text2);
+                            mDB.delete(item.key2);
                             // 파일 삭제
                             File file = new File(item.file2);
                             if (file.exists()) {
@@ -250,7 +250,7 @@ public class SendActivity extends AppCompatActivity {
                         Constant.ReturnCode result = upload.fileUpload(item.file3);
                         if (result == Constant.ReturnCode.http201) {
                             Log.d(TAG, "파일 업로드 완료 =>" + item.file3);
-                            mDB.delete(item.text3);
+                            mDB.delete(item.key3);
                             // 파일 삭제
                             File file = new File(item.file3);
                             if (file.exists()) {
@@ -293,9 +293,14 @@ public class SendActivity extends AppCompatActivity {
                         Log.d(TAG, "list clear and list view 초기화");
                         adapter.getList().clear();
                         arrayList.clear();
+                        view.setAdapter(adapter);
+                        adapter.notifyDataSetChanged();
+
+
                         arrayList = populateList();
                         adapter.setList(arrayList);
                         adapter.notifyDataSetChanged();
+                        view.setAdapter(adapter);
                         view.invalidateViews();
                         view.refreshDrawableState();
                     }
@@ -374,17 +379,22 @@ public class SendActivity extends AppCompatActivity {
                                 Log.d(TAG, "job completed....");
                                 // 작업이 완료되었으면..
                                 // 리스트를 다시 읽어 들어야 한다.
-                                runOnUiThread(new Runnable() {
-                                    public void run() {
+                                //runOnUiThread(new Runnable() {
+                                //    public void run() {
                                         adapter.getList().clear();
                                         arrayList.clear();
+                                        view.setAdapter(adapter);
+                                        adapter.notifyDataSetChanged();
+
+
                                         arrayList = populateList();
                                         adapter.setList(arrayList);
                                         adapter.notifyDataSetChanged();
+                                        view.setAdapter(adapter);
                                         view.invalidateViews();
                                         view.refreshDrawableState();
-                                    }
-                                });
+                               //     }
+                               // });
                             }})
                         .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int whichButton) {

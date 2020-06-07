@@ -95,33 +95,58 @@ public class SharePagerActivity extends AppCompatActivity {
                 }
             }
         };
+
         // 버튼 이벤트 리스너
         ImageView btnDelete = findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(onClickListener);
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
+
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                mPosition = position;
+                mTitle = mList.get(position).oriFileName;
+                mKey = mList.get(position).imageSeqno;
+                mtxtView.setText(mTitle);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
+
         adapter = new SharePagerAdapter(this);
         adapter.setDataArray(mList);
         Display display = getWindowManager().getDefaultDisplay();
         adapter.setDisplay(display);
+        Log.d(TAG , "adapter is set..");
         viewPager.setAdapter(adapter);
+        Log.d(TAG , "adapter is set..end");
+        Log.d(TAG , "setCurrentItem is set..");
         viewPager.setCurrentItem(mSetIndex);
+        Log.d(TAG , "setCurrentItem is set..end");
+        Log.d(TAG, "msetIndex : " + mSetIndex);
     }
 
-    /**
-     * 현재 페이지의 타이틀, 키, 포지션 위치를 받아서 저장한다.
-     * 삭제 시 포지션을 통해 제거해야 한다.
-     * @param title
-     * @param key
-     * @param position
-     */
-    public void setCurrentImage(String title, String key, int position)
-    {
-        mPosition = position;
-        mTitle = title;
-        mKey = key;
-        mtxtView.setText(title);
-    }
+//    /**
+//     * 현재 페이지의 타이틀, 키, 포지션 위치를 받아서 저장한다.
+//     * 삭제 시 포지션을 통해 제거해야 한다.
+//     * @param title
+//     * @param key
+//     * @param position
+//     */
+//    public void setCurrentImage(String title, String key, int position)
+//    {
+//        mPosition = position;
+//        mTitle = title;
+//        mKey = key;
+//        mtxtView.setText(title);
+//    }
     /**
      * 페이져 뷰에서 사용할 데이터에 대해서 리스트화 한다.
      */
@@ -129,6 +154,7 @@ public class SharePagerActivity extends AppCompatActivity {
     {
         mList = new ArrayList<>();
 
+        int index = 0;
         for (int i=0; i<bundleList.size(); i++)
         {
             ShareSerializeItem item = bundleList.get(i);
@@ -150,8 +176,9 @@ public class SharePagerActivity extends AppCompatActivity {
                     mList.add(data);
                     if (item1.imageSeqno.equals(mKey))
                     {
-                        mSetIndex = mList.size()-1;
+                        mSetIndex = index; // mList.size()-1;
                     }
+                    index++;
                 }
                 if (item2 != null && item2.oriFileName != null)
                 {
@@ -163,8 +190,9 @@ public class SharePagerActivity extends AppCompatActivity {
                     mList.add(data);
                     if (item2.imageSeqno.equals(mKey))
                     {
-                        mSetIndex = mList.size()-1;
+                        mSetIndex =index; //  mList.size()-1;
                     }
+                    index++;
                 }
                 if (item3 != null && item3.oriFileName != null)
                 {
@@ -176,8 +204,9 @@ public class SharePagerActivity extends AppCompatActivity {
                     mList.add(data);
                     if (item3.imageSeqno.equals(mKey))
                     {
-                        mSetIndex = mList.size()-1;
+                        mSetIndex = index; // mList.size()-1;
                     }
+                    index++;
                 }
             }
         }

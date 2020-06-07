@@ -89,6 +89,26 @@ public class ImageDetailPagerActivity extends AppCompatActivity {
         setImageLayout();
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
+
+            @Override
+            public void onPageSelected(int position) {
+                mIndex = position;
+                mCurrentFileName = mFileName.get(position).toString();
+                mKey = mFilekey.get(position).toString();
+
+                int pos = mCurrentFileName.lastIndexOf(".");
+                String _fileName = mCurrentFileName.substring(mCurrentFileName.lastIndexOf("/")+1, pos);
+                mtxtView.setText(_fileName);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {}
+        });
+
         adapter = new SendDetailPagerAdapter(this);
         adapter.setDataArray(mFileName, mFilekey);
         Display display = getWindowManager().getDefaultDisplay();
@@ -97,23 +117,23 @@ public class ImageDetailPagerActivity extends AppCompatActivity {
         viewPager.setCurrentItem(mIndex);
     }
 
-    /**
-     * Pager Adapter에서 화면이 그려질 때 현재 Index와 key를 받아온다.
-     *
-     * @param fileName
-     * @param fileKey
-     * @param position
-     */
-    public void setCurrentImage(String fileName, String fileKey, int position)
-    {
-        mIndex = position;
-        mCurrentFileName = fileName;
-        mKey = fileKey;
-
-        int pos = mCurrentFileName.lastIndexOf(".");
-        String _fileName = mCurrentFileName.substring(mCurrentFileName.lastIndexOf("/")+1, pos);
-        mtxtView.setText(_fileName);
-    }
+//    /**
+//     * Pager Adapter에서 화면이 그려질 때 현재 Index와 key를 받아온다.
+//     *
+//     * @param fileName
+//     * @param fileKey
+//     * @param position
+//     */
+//    public void setCurrentImage(String fileName, String fileKey, int position)
+//    {
+//        mIndex = position;
+//        mCurrentFileName = fileName;
+//        mKey = fileKey;
+//
+//        int pos = mCurrentFileName.lastIndexOf(".");
+//        String _fileName = mCurrentFileName.substring(mCurrentFileName.lastIndexOf("/")+1, pos);
+//        mtxtView.setText(_fileName);
+//    }
 
     /**
      * 데이터베이스에서 이미지를 읽어서 Flipper에 추가한다.

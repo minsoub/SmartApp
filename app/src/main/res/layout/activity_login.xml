@@ -2,6 +2,7 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="50dp"
-        android:paddingBottom="10dp"
+        android:paddingBottom="20dp"
         android:layout_marginTop="50dp">
         <TextView
             android:id="@+id/smail_title"
@@ -22,12 +23,9 @@
             android:layout_marginBottom="0dp"
             android:textColor="#ffffff"
             android:textSize="14dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintHorizontal_bias="0.34"
+            app:layout_constraintStart_toStartOf="@+id/main_title"
             android:gravity="center_horizontal"
             android:text="스마트원전" />
-
         <TextView
             android:id="@+id/main_title"
             android:layout_width="wrap_content"
@@ -44,19 +42,23 @@
     </android.support.constraint.ConstraintLayout>
 
     <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
+        android:id="@+id/content_area"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="15dp"
         android:background="#ffffff"
-        app:layout_constraintTop_toBottomOf="@+id/main_content">
+        card_view:cardCornerRadius="5dp"
+        card_view:cardUseCompatPadding="true"
+        app:layout_constraintTop_toBottomOf="@+id/main_content"
+        app:layout_constraintStart_toStartOf="@+id/main_content"
+        app:layout_constraintEnd_toEndOf="@+id/main_content"
+        >
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:layout_marginTop="20dp">
+            android:layout_marginTop="10dp">
             <EditText
                 android:id="@+id/txtId"
                 android:layout_width="match_parent"
@@ -124,37 +126,45 @@
     </android.support.v7.widget.CardView>
 
 
+    <!-- footer -->
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="50dp"
+        >
+
         <ImageView
             android:id="@+id/logo_image"
             android:layout_width="wrap_content"
-            android:layout_marginRight="13px"
-            android:layout_height="15dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="0dp"
+            android:layout_marginRight="2px"
+            android:adjustViewBounds="true"
             android:contentDescription="@string/title1"
+            android:gravity="center"
             android:scaleType="centerCrop"
             android:src="@mipmap/logo"
-            android:layout_marginTop="10dp"
-            android:adjustViewBounds="true"
-            app:layout_constraintHorizontal_bias="0.3"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"/>
+            app:layout_constraintRight_toLeftOf="@+id/bottom_title" />
 
         <TextView
             android:id="@+id/bottom_title"
-            android:layout_width="0pt"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
-            android:layout_marginTop="0dp"
-            android:layout_marginBottom="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginLeft="2dp"
+            android:gravity="center"
+            android:text="한빛본부 3발전소"
             android:textColor="#ffffff"
-            android:textSize="12dp"
+            android:textSize="14dp"
+            app:layout_constraintHorizontal_chainStyle="packed"
             app:layout_constraintLeft_toRightOf="@+id/logo_image"
-            android:gravity="center_horizontal"
-            android:text="한빛본부 3발전소" />
+            app:layout_constraintRight_toRightOf="parent"
+            tools:layout_editor_absoluteY="1dp" />
 
     </android.support.constraint.ConstraintLayout>
 

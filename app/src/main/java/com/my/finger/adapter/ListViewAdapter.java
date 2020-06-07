@@ -111,7 +111,7 @@ public class ListViewAdapter extends BaseAdapter {
         }
         mSelectedDataItem = mList.get(position);
         //Log.d(TAG, "ListViewAdapter select : " + selectedDataItem.toString());
-        if (mSelectedDataItem.text1 != null) {
+        if (mSelectedDataItem.text1 != null && mSelectedDataItem.image1 != null) {
             holder.text1.setText(mSelectedDataItem.text1);
             holder.image1.setImageBitmap(mSelectedDataItem.image1);
             holder.image1.setTag(mSelectedDataItem.key1);
@@ -124,7 +124,7 @@ public class ListViewAdapter extends BaseAdapter {
         }else {
             holder.radio1.setImageDrawable(null);
         }
-        if (mSelectedDataItem.text2 != null) {
+        if (mSelectedDataItem.text2 != null && mSelectedDataItem.image2 != null) {
             holder.text2.setText(mSelectedDataItem.text2);
             holder.image2.setImageBitmap(mSelectedDataItem.image2);
             holder.image2.setTag(mSelectedDataItem.key2);
@@ -137,7 +137,7 @@ public class ListViewAdapter extends BaseAdapter {
         }else {
             holder.radio2.setImageDrawable(null);
         }
-        if (mSelectedDataItem.text3 != null) {
+        if (mSelectedDataItem.text3 != null && mSelectedDataItem.image3 != null) {
             holder.text3.setText(mSelectedDataItem.text3);
             holder.image3.setImageBitmap(mSelectedDataItem.image3);
             holder.image3.setTag(mSelectedDataItem.key3);
