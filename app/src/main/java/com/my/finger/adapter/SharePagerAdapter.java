@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 /**
  * SharePagerActivity class에서 사용하는 Adapter 클래스
+ * 사진공유 -> 사진상세 페이지
  */
 public class SharePagerAdapter  extends PagerAdapter {
     private final String TAG = "KDN_TAG";
@@ -84,6 +85,7 @@ public class SharePagerAdapter  extends PagerAdapter {
                 Log.d(TAG, "instantiateItem postion => "+position);
                 in = new java.net.URL(mList.get(position).logFileName).openStream();
                 Bitmap bmp = BitmapFactory.decodeStream(in);
+                //imageView.setImageBitmap(bmp);
                 Bitmap bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
                 imageView.setImageBitmap(bitmap);
 

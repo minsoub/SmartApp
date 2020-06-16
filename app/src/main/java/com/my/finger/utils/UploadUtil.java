@@ -153,12 +153,17 @@ public class UploadUtil {
             String type,
             FileInputStream fis)  {
         try {
+            //int pos = fieldValue .lastIndexOf("/");
+            String fileName = fieldValue.substring(fieldValue.lastIndexOf("/")+1);
+            Log.d(TAG, "fileName : " + fileName);
+            Log.d(TAG, "fileName : " + URLEncoder.encode(fileName, "UTF-8"));
+
             // opening boundary line
             dataStream.writeBytes(twoHyphens + boundary + CRLF);
             dataStream.writeBytes("Content-Disposition: form-data; name=\""
                     + fieldName
                     + "\";filename=\""
-                    + fieldValue
+                    + URLEncoder.encode(fileName, "UTF-8")
                     + "\""
                     + CRLF);
             dataStream.writeBytes("Content-Type: " + type +  CRLF);

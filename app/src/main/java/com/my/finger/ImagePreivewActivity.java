@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.View;
@@ -21,6 +20,10 @@ import com.my.finger.utils.TouchImageView;
 import java.io.File;
 import java.io.FileOutputStream;
 
+/**
+ * 사진 촬영에서 이미지 상세 보기 화면
+ * 이미지 이름 변경하기 위한 화면
+ */
 public class ImagePreivewActivity extends AppCompatActivity  {
     private final String TAG = "KDN_TAG";
     private String mFileName;
@@ -51,7 +54,7 @@ public class ImagePreivewActivity extends AppCompatActivity  {
 
             Bitmap bitmap = BitmapFactory.decodeFile(mFileName);
             //int newWidth = metrics.widthPixels;
-            Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap, size.x, size.y, true);
+            Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap,  size.x, size.y, true);
 
 
             if (newbitMap == null)
@@ -126,7 +129,7 @@ public class ImagePreivewActivity extends AppCompatActivity  {
                     Toast.LENGTH_SHORT).show();
 
             // Activity move
-            Intent intent = new Intent(ImagePreivewActivity.this, CameraActivity.class);
+            Intent intent = new Intent(ImagePreivewActivity.this, KdnActivity.class);
             Bundle b = new Bundle();
             b.putString("checked", "Y");
             intent.putExtras(b);
@@ -147,7 +150,7 @@ public class ImagePreivewActivity extends AppCompatActivity  {
             file.delete();
 
         // your code.
-        Intent intent = new Intent(ImagePreivewActivity.this, CameraActivity.class);
+        Intent intent = new Intent(ImagePreivewActivity.this, KdnActivity.class);
         Bundle b = new Bundle();
         b.putString("checked", "Y");
         intent.putExtras(b);

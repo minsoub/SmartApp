@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.my.finger.KdnActivity">
+    tools:context=".CameraActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -54,12 +54,12 @@
             android:background="#000000"
             app:layout_constraintTop_toBottomOf="@+id/layout1"
             >
-
-            <com.my.finger.KdnPreview
-                android:id="@+id/preview"
+            <TextureView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible"/>
+                android:id="@+id/cameraTextureView"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true" />
 
             <LinearLayout
                 android:id="@+id/set"
@@ -174,4 +174,5 @@
 
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>

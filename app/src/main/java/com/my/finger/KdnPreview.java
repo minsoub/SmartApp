@@ -1,19 +1,13 @@
 package com.my.finger;
 
-import android.arch.lifecycle.Lifecycle;
-import android.arch.lifecycle.LifecycleObserver;
-import android.arch.lifecycle.OnLifecycleEvent;
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
-import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
-import android.hardware.Camera;
+
 import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -29,39 +23,43 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
-
 /**
  * 카메라 Preview 구현 클래스
  */
-public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback{
+public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
     private final String TAG = "KDN_TAG";
-    private Camera mCamera;
-    public List<Camera.Size> mSupportedPreviewSizes;
-    private Camera.Size mPreviewSize;
+    private android.hardware.Camera mCamera;
+    public List<android.hardware.Camera.Size> mSupportedPreviewSizes;
+    private android.hardware.Camera.Size mPreviewSize;
     private Context context;
     private SurfaceHolder mHolder;
     private int mDisplayOrientation;
-    private Camera.CameraInfo mCameraInfo;
+    private android.hardware.Camera.CameraInfo mCameraInfo;
     private DataBaseUtil mDB;
     private boolean isChecked = false;
 
 
 
-    private static final int CAMERA_FACING = Camera.CameraInfo.CAMERA_FACING_BACK; // Camera.CameraInfo.CAMERA_FACING_FRONT
+    private static final int CAMERA_FACING = android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK; // Camera.CameraInfo.CAMERA_FACING_FRONT
 
-    public CameraPreview(Context context, AttributeSet attrs)
+    public KdnPreview(Context context, AttributeSet attrs)
     {
         super(context, attrs);
 
         this.context = context;
-        mCamera = CameraActivity.getCamera();
+        mCamera = KdnActivity.getCamera();
         if (mCamera == null)
         {
-            mCamera = Camera.open();
+            mCamera = android.hardware.Camera.open();
         }
         mSupportedPreviewSizes = mCamera.getParameters().getSupportedPreviewSizes();
 
         mDB = new DataBaseUtil(context);
+    }
+
+    public void stopPreview()
+    {
+        mCamera.stopPreview();
     }
 
     /**
@@ -89,30 +87,30 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             // 카메라 객체를 사용할 수 있게 연결한다.
             if (mCamera == null) {
-                mCamera = Camera.open();
+                mCamera = android.hardware.Camera.open();
             }
             // Camera info
-            Camera.CameraInfo cameraInfo = new Camera.CameraInfo();
-            Camera.getCameraInfo(CAMERA_FACING, cameraInfo);
+            android.hardware.Camera.CameraInfo cameraInfo = new android.hardware.Camera.CameraInfo();
+            android.hardware.Camera.getCameraInfo(CAMERA_FACING, cameraInfo);
 
             mCameraInfo = cameraInfo;
-            mDisplayOrientation = CameraActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
+            mDisplayOrientation = KdnActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
 
             int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
             mCamera.setDisplayOrientation(orientation);
 
             // 카메라 설정
-            Camera.Parameters parameters = mCamera.getParameters();
+            android.hardware.Camera.Parameters parameters = mCamera.getParameters();
 
             // 자동 포커스 설정
             List<String> focusModes = parameters.getSupportedFocusModes();
-            if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+            if (focusModes.contains(android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
                 // set the focus mode
                 // parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
-                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                parameters.setFocusMode(android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
             }
-            List<Camera.Size> sizes = parameters.getSupportedPictureSizes();
-            Camera.Size optimalSize;
+            List<android.hardware.Camera.Size> sizes = parameters.getSupportedPictureSizes();
+            android.hardware.Camera.Size optimalSize;
             optimalSize = getOptimalPreviewSize(sizes, mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(optimalSize.width, optimalSize.height);
 
@@ -148,16 +146,16 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         try {
             mCamera .stopPreview();
 
-            Camera.Parameters parameters = mCamera .getParameters();
+            android.hardware.Camera.Parameters parameters = mCamera .getParameters();
 
             int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
             mCamera.setDisplayOrientation(orientation);
 
             try {
                 // focus 조절
-                parameters.setZoom(5);
-                if (parameters.getSupportedFocusModes().contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
-                    parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
+                parameters.setZoom(0);
+                if (parameters.getSupportedFocusModes().contains(android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE)) {
+                    parameters.setFocusMode(android.hardware.Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                 }
                 mCamera.setParameters(parameters);
 
@@ -222,6 +220,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
+//        width = 1920;
+//        height = 1080;
         setMeasuredDimension(width, height);
 
         if (mSupportedPreviewSizes != null) {
@@ -257,7 +257,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 //        }
 //    }
 
-    public Camera.Size getOptimalPreviewSize(List<Camera.Size> sizes, int w, int h) {
+    public android.hardware.Camera.Size getOptimalPreviewSize(List<android.hardware.Camera.Size> sizes, int w, int h) {
 
         final double ASPECT_TOLERANCE = 0.05;
         double targetRatio = (double) h / w;
@@ -265,12 +265,12 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         if (sizes == null)
             return null;
 
-        Camera.Size optimalSize = null;
+        android.hardware.Camera.Size optimalSize = null;
         double minDiff = Double.MAX_VALUE;
 
         int targetHeight = h;
 
-        for (Camera.Size size : sizes) {
+        for (android.hardware.Camera.Size size : sizes) {
             double ratio = (double) size.width / size.height;
             if (Math.abs(ratio - targetRatio) > ASPECT_TOLERANCE)
                 continue;
@@ -283,7 +283,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
 
         if (optimalSize == null) {
             minDiff = Double.MAX_VALUE;
-            for (Camera.Size size : sizes) {
+            for (android.hardware.Camera.Size size : sizes) {
                 if (Math.abs(size.height - targetHeight) < minDiff) {
                     optimalSize = size;
                     minDiff = Math.abs(size.height - targetHeight);
@@ -296,7 +296,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
     /**
      * 안드로이드 디바이스 방향에 맞는 카메라 프리뷰를 화면에 보여주기 위해 계산합니다.
      */
-    public static int calculatePreviewOrientation(Camera.CameraInfo info, int rotation) {
+    public static int calculatePreviewOrientation(android.hardware.Camera.CameraInfo info, int rotation) {
         int degrees = 0;
 
         switch (rotation) {
@@ -315,7 +315,7 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         }
 
         int result;
-        if (info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
+        if (info.facing == android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT) {
             result = (info.orientation + degrees) % 360;
             result = (360 - result) % 360;  // compensate the mirror
         } else {  // back-facing
@@ -332,22 +332,22 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
         mCamera.takePicture(shutterCallback, rawCallback, jpegCallback);
     }
 
-    Camera.ShutterCallback shutterCallback = new Camera.ShutterCallback() {
+    android.hardware.Camera.ShutterCallback shutterCallback = new android.hardware.Camera.ShutterCallback() {
         public void onShutter() {
 
         }
     };
-    Camera.PictureCallback rawCallback = new Camera.PictureCallback()
+    android.hardware.Camera.PictureCallback rawCallback = new android.hardware.Camera.PictureCallback()
     {
-        public void onPictureTaken(byte[] data, Camera camera)
+        public void onPictureTaken(byte[] data, android.hardware.Camera camera)
         {
 
         }
     };
     // 참고 : http://stackoverflow.com/q/37135675
-    Camera.PictureCallback jpegCallback = new Camera.PictureCallback()
+    android.hardware.Camera.PictureCallback jpegCallback = new android.hardware.Camera.PictureCallback()
     {
-        public void onPictureTaken(byte[] data, Camera camera)
+        public void onPictureTaken(byte[] data, android.hardware.Camera camera)
         {
             //이미지의 너비와 높이 결정
             //int w = camera.getParameters().getPreviewSize().width; // getPictureSize().width;
@@ -381,8 +381,8 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
                 mCamera.stopPreview();
                 mCamera = null;
 
-                CameraActivity.setByteImage(currentData);
-                CameraActivity.movePreivewImage();
+                KdnActivity.setByteImage(currentData);
+                KdnActivity.movePreivewImage();
             }else {
                 //파일로 저장
                 new SaveImageTask().execute(currentData);

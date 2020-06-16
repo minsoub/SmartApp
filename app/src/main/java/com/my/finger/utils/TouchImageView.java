@@ -26,7 +26,7 @@ public class TouchImageView extends ImageView {
 
     private PointF mLastTouch = new PointF();
     private PointF mStartTouch = new PointF();
-    private float minScale = 0.5f;
+    private float minScale = 1f;
     private float maxScale = 4f;
     private float[] mCriticPoints;
 
