@@ -44,14 +44,22 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
     public static String tempFileName;
     private static Context mContext;
     private static int zoom = 0;
+    private static String init = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle b = getIntent().getExtras();
+        if (b != null) {
+            init = b.get("main").toString();
+        }
         //setContentView(R.layout.activity_camera);
         supportRequestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+
+
 
         setInit();
         // 안드로이드 6.0 이상 버전에서는 CAMERA 권한 허가를 요청한다.
@@ -76,14 +84,23 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
     @Override
     public void onResume() {
         super.onResume();
-        Log.d(TAG, "initializeCamera called...");
-        mCamera = null;
-        if (mCamera == null) {
-            //requestPermissionCamera();
-            setInit();
+        try {
+            Log.d(TAG, "onResume initializeCamera called...[" + init + "]");
+            mCamera = null;
+            if (mCamera == null) {
+                //requestPermissionCamera();
+                if (init.equals("0")) {
+                    Intent intent = new Intent(KdnActivity.this, MainActivity.class);
+                    startActivity(intent);
+                } else {
+                    setInit();
+                    init = "0";
+                }
+            }
+        }catch(Exception ex) {
+            ex.printStackTrace();
         }
     }
-
     // @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
     @Override
     public void onPause() {
@@ -183,7 +200,7 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
                         break;
                     case R.id.btnZoom2:
                         params=mCamera.getParameters();
-                        params.setZoom(10);
+                        params.setZoom(15);
                         mCamera.setParameters(params);
                         break;
                     case R.id.btnZoom3:

@@ -132,6 +132,7 @@ public class ImagePreivewActivity extends AppCompatActivity  {
             Intent intent = new Intent(ImagePreivewActivity.this, KdnActivity.class);
             Bundle b = new Bundle();
             b.putString("checked", "Y");
+            b.putString("main", "1");
             intent.putExtras(b);
             startActivity(intent);
         }finally {
@@ -153,6 +154,7 @@ public class ImagePreivewActivity extends AppCompatActivity  {
         Intent intent = new Intent(ImagePreivewActivity.this, KdnActivity.class);
         Bundle b = new Bundle();
         b.putString("checked", "Y");
+        b.putString("main", "1");
         intent.putExtras(b);
         startActivity(intent);
     }

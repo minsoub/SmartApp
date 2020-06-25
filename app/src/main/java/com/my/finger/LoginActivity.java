@@ -242,9 +242,14 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 } catch (IOException e) {
-                    Toast.makeText(getBaseContext(), "로그인하는데 에러가 발생하였습니다["+e.toString()+"]", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, e.toString());
                     e.printStackTrace();
+                    runOnUiThread(new Runnable() {
+                        public void run() {
+                            Toast.makeText(getBaseContext(), "로그인하는데 에러가 발생하였습니다", Toast.LENGTH_SHORT).show();
+
+                        }
+                    });
                 }
                 return null;
             }

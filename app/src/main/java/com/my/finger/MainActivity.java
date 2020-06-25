@@ -62,6 +62,10 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.btnCamera:
                         Intent intent = new Intent(MainActivity.this, KdnActivity.class);
                         //Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                        Bundle b = new Bundle();
+                        b.putString("main", "1");
+                        b.putString("checked", "N");
+                        intent.putExtras(b);
                         startActivity(intent);
                         break;
                     // 사진 전송하기

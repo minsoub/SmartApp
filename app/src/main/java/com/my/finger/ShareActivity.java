@@ -539,10 +539,18 @@ public class ShareActivity extends AppCompatActivity {
                             }
                         });
                     } catch (JSONException e) {
-                        Toast.makeText(getBaseContext(), "조회하는데 에러가 발생하였습니다["+e.toString()+"]", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                                          public void run() {
+                                              Toast.makeText(getBaseContext(), "조회하는데 에러가 발생하였습니다", Toast.LENGTH_SHORT).show();
+                                          }
+                                      });
                         e.printStackTrace();
                     } catch (IOException e) {
-                        Toast.makeText(getBaseContext(), "조회하는데 에러가 발생하였습니다["+e.toString()+"]", Toast.LENGTH_SHORT).show();
+                        runOnUiThread(new Runnable() {
+                            public void run() {
+                                Toast.makeText(getBaseContext(), "조회하는데 에러가 발생하였습니다", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                         Log.d(TAG, e.toString());
                         e.printStackTrace();
                     }finally {
