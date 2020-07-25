@@ -1,14 +1,20 @@
 package com.my.finger;
 
+import android.accessibilityservice.AccessibilityService;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 
+import android.media.ExifInterface;
 import android.os.AsyncTask;
+import android.os.Build;
+import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
+import android.view.Display;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.Surface;
@@ -17,11 +23,13 @@ import android.util.Log;
 import com.my.finger.utils.CommonUtil;
 import com.my.finger.utils.DataBaseUtil;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 /**
  * 카메라 Preview 구현 클래스
@@ -37,8 +45,6 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
     private android.hardware.Camera.CameraInfo mCameraInfo;
     private DataBaseUtil mDB;
     private boolean isChecked = false;
-
-
 
     private static final int CAMERA_FACING = android.hardware.Camera.CameraInfo.CAMERA_FACING_BACK; // Camera.CameraInfo.CAMERA_FACING_FRONT
 
@@ -77,7 +83,6 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
     }
 
 
-
     /**
      * SurfaceView 생성시 호출
      * @param surfaceHolder
@@ -94,7 +99,7 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
             android.hardware.Camera.getCameraInfo(CAMERA_FACING, cameraInfo);
 
             mCameraInfo = cameraInfo;
-            mDisplayOrientation = KdnActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
+            mDisplayOrientation = KdnActivity.getInstance.getOrientation();  // KdnActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
 
             int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
             mCamera.setDisplayOrientation(orientation);
@@ -114,6 +119,8 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
             optimalSize = getOptimalPreviewSize(sizes, mPreviewSize.width, mPreviewSize.height);
             parameters.setPictureSize(optimalSize.width, optimalSize.height);
 
+
+
             // set Camera parameters
             mCamera.setParameters(parameters);
             mCamera.setPreviewDisplay(surfaceHolder);
@@ -124,7 +131,7 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
             Log.d(TAG, "surfaceCreated called...");
         }catch(Exception ex)
         {
-
+            ex.printStackTrace();
         }
     }
 
@@ -137,6 +144,8 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
      */
     @Override
     public void surfaceChanged(SurfaceHolder surfaceHolder, int i, int i1, int i2) {
+        Log.d(TAG, "surfaceChanged called...");
+
         // 카메라 화면을 회전 할 때의 처리
         if (surfaceHolder.getSurface() == null){
             // 프리뷰가 존재하지 않을때
@@ -147,6 +156,8 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
             mCamera .stopPreview();
 
             android.hardware.Camera.Parameters parameters = mCamera .getParameters();
+
+            mDisplayOrientation = KdnActivity.getInstance.getOrientation();
 
             int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
             mCamera.setDisplayOrientation(orientation);
@@ -217,15 +228,25 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
      */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-
         final int width = resolveSize(getSuggestedMinimumWidth(), widthMeasureSpec);
         final int height = resolveSize(getSuggestedMinimumHeight(), heightMeasureSpec);
-//        width = 1920;
-//        height = 1080;
-        setMeasuredDimension(width, height);
 
-        if (mSupportedPreviewSizes != null) {
-            mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
+        // 메인 센서에서 방향을 가져온다.
+        if (KdnActivity.getInstance.getOrientation() == 90)  // 세로
+        {
+            setMeasuredDimension(width, height);
+            Log.d(TAG, "onMeasure width : " + width + ", height : " + height);
+            if (mSupportedPreviewSizes != null) {
+                mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, width, height);
+                Log.d(TAG, "onMeasure mPreviewSize : " + mPreviewSize.width + ", height : " + mPreviewSize.height);
+            }
+        }else {
+            setMeasuredDimension(height, width);
+            Log.d(TAG, "onMeasure width : " + height + ", height : " + width);
+            if (mSupportedPreviewSizes != null) {
+                mPreviewSize = getOptimalPreviewSize(mSupportedPreviewSizes, height, width);
+                Log.d(TAG, "onMeasure mPreviewSize : " + mPreviewSize.width + ", height : " + mPreviewSize.height);
+            }
         }
     }
 
@@ -258,6 +279,19 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
 //    }
 
     public android.hardware.Camera.Size getOptimalPreviewSize(List<android.hardware.Camera.Size> sizes, int w, int h) {
+        android.hardware.Camera.Size optimalSize = null;
+//        int orientation = KdnActivity.getInstance.getOrientation();
+//        if (orientation == 90)  // 세로
+//        {
+//            optimalSize = sizes.get(0);
+//            optimalSize.width = 1080;
+//            optimalSize.height = 1963;
+//        }else {
+//            optimalSize.width = 1963;
+//            optimalSize.height = 1080;
+//        }
+//        return optimalSize;
+
 
         final double ASPECT_TOLERANCE = 0.05;
         double targetRatio = (double) h / w;
@@ -265,7 +299,7 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
         if (sizes == null)
             return null;
 
-        android.hardware.Camera.Size optimalSize = null;
+
         double minDiff = Double.MAX_VALUE;
 
         int targetHeight = h;
@@ -293,12 +327,26 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
 
         return optimalSize;
     }
+
     /**
      * 안드로이드 디바이스 방향에 맞는 카메라 프리뷰를 화면에 보여주기 위해 계산합니다.
+     *
+     * @param info
+     * @param rotation
+     * @return
      */
     public static int calculatePreviewOrientation(android.hardware.Camera.CameraInfo info, int rotation) {
         int degrees = 0;
+//        Log.d("KDN_TAG", "screen orientation0 : " + rotation);
+//        rotation = KdnActivity.getInstance.getOrientation();
+//        Log.d("KDN_TAG", "screen orientation1 : " + rotation);
+//        rotation=  KdnActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
+//        Log.d("KDN_TAG", "screen orientation2 : " + rotation);
+//
+//        Configuration config = KdnActivity.getInstance.getResources().getConfiguration();
+        Log.d("KDN_TAG", "screen orientation3 : " + info.orientation);
 
+        //rotation =  KdnActivity.getInstance.getOrientation();
         switch (rotation) {
             case Surface.ROTATION_0:
                 degrees = 0;
@@ -319,8 +367,11 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
             result = (info.orientation + degrees) % 360;
             result = (360 - result) % 360;  // compensate the mirror
         } else {  // back-facing
+            Log.d("KDN_TAG", "orientation : " + info.orientation + ", degress : " + degrees);
             result = (info.orientation - degrees + 360) % 360;
         }
+
+        // mCamera.setDisplayOrientation(result);
 
         return result;
     }
@@ -349,43 +400,61 @@ public class KdnPreview extends SurfaceView implements SurfaceHolder.Callback{
     {
         public void onPictureTaken(byte[] data, android.hardware.Camera camera)
         {
-            //이미지의 너비와 높이 결정
-            //int w = camera.getParameters().getPreviewSize().width; // getPictureSize().width;
-            //int h = camera.getParameters().getPreviewSize().height;  // getPictureSize().height;
+            Log.d(TAG, "onPictureTaken function called");
 
-            int w = camera.getParameters().getPictureSize().width;
-            int h = camera.getParameters().getPictureSize().height;
+            try {
+                //이미지의 너비와 높이 결정
+                //int w = camera.getParameters().getPreviewSize().width; // getPictureSize().width;
+                //int h = camera.getParameters().getPreviewSize().height;  // getPictureSize().height;
 
-            //int orientation = CameraActivity.getInstance.getWindowManager().getDefaultDisplay().getRotation();
-            int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
+                int w = camera.getParameters().getPictureSize().width;
+                int h = camera.getParameters().getPictureSize().height;
+
+                Log.d(TAG, "camear getPictureSize w : " + w + ", h : " + h);
+
+                //int orientation = context.getWindowManager().getDefaultDisplay().getRotation();
+                //int orientation = calculatePreviewOrientation(mCameraInfo, mDisplayOrientation);
+                int orientation = KdnActivity.getInstance.getOrientation();
+                Log.d(TAG, "KdnActivity sensor orientation : " + orientation);  // 90
 
 
-            //byte array를 bitmap으로 변환
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-            Bitmap bitmap = BitmapFactory.decodeByteArray( data, 0, data.length, options);
+                //byte array를 bitmap으로 변환
+                BitmapFactory.Options options = new BitmapFactory.Options();
+                options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);
+
+                Log.d(TAG, "bitmap real size width : " + bitmap.getWidth()+", height : " + bitmap.getHeight());
+                //이미지를 디바이스 방향으로 회전
+                Matrix matrix = new Matrix();
+                if (orientation == 90) {
+                    //matrix.postScale(w, h);
+                    matrix.postRotate(orientation);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+                } else {
+                    //matrix.postScale(h, w);
+                    matrix.postRotate(orientation);
+                    bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
+                }
 
 
-            //이미지를 디바이스 방향으로 회전
-            Matrix matrix = new Matrix();
-            matrix.postRotate(orientation);
-            bitmap =  Bitmap.createBitmap(bitmap, 0, 0, w, h, matrix, true);
 
-            //bitmap을 byte array로 변환
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
-            byte[] currentData = stream.toByteArray();
+                //bitmap을 byte array로 변환
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] currentData = stream.toByteArray();
 
-            if (isChecked == true)
-            {
-                mCamera.stopPreview();
-                mCamera = null;
+                if (isChecked == true) {
+                    mCamera.stopPreview();
+                    mCamera = null;
 
-                KdnActivity.setByteImage(currentData);
-                KdnActivity.movePreivewImage();
-            }else {
-                //파일로 저장
-                new SaveImageTask().execute(currentData);
+                    KdnActivity.setByteImage(currentData);
+                    KdnActivity.movePreivewImage();
+                } else {
+                    //파일로 저장
+                    new SaveImageTask().execute(currentData);
+                }
+            }catch(Exception ex) {
+                ex.printStackTrace();
             }
         }
     };

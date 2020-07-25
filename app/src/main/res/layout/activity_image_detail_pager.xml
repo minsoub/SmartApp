@@ -20,12 +20,12 @@
     <LinearLayout
         android:id="@+id/top_content"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="55dp"
         android:layout_marginBottom="5dp"
         android:background="#000000"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent">
-        <TextView
+        <EditText
             android:id="@+id/send_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +33,6 @@
             android:layout_marginTop="10dp"
             android:gravity="center_horizontal"
             android:text="사진파일명"
-            android:textSize="20dp"
             android:textColor="#ffffff" />
     </LinearLayout>
 

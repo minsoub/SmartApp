@@ -71,11 +71,11 @@
 
     <LinearLayout
         android:id="@+id/bottom_content"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:background="#26000000"
+        android:background="#80000000"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -87,27 +87,33 @@
                 android:id="@+id/btnDelete"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="버리기"
                 android:textColor="#ffffff"
-                android:src="@mipmap/btn_del01"
-                app:layout_constraintRight_toLeftOf="@+id/btnSend" />
+                android:src="@mipmap/btn_del02"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/btnSend"
+                tools:ignore="MissingConstraints" />
+
             <ImageView
                 android:id="@+id/btnSend"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginLeft="5dp"
                 android:layout_marginRight="5dp"
                 android:text="전송하기"
                 android:textColor="#ffffff"
-                android:src="@mipmap/btn_send01"
-                app:layout_constraintEnd_toEndOf="parent"
-                />
+                android:src="@mipmap/btn_send02"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/btnDelete"
+                tools:ignore="MissingConstraints" />
         </android.support.constraint.ConstraintLayout>
     </LinearLayout>
+
 
 
 </android.support.constraint.ConstraintLayout>

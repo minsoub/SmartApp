@@ -352,7 +352,7 @@ public class ShareActivity extends AppCompatActivity {
                         Bitmap bmp = BitmapFactory.decodeStream(in);
                         int newWidth = metrics.widthPixels / 3 - 15;
                         Bitmap newbitMap = Bitmap.createScaledBitmap(bmp, newWidth, newWidth, true);
-                        m1.image = newbitMap;
+                        m1.image = bmp; // newbitMap;
 
                         if (a1.item2.thumbnailFileName != null) {
                             m2.imageSeqno = a1.item2.imageSeqno;
@@ -369,7 +369,7 @@ public class ShareActivity extends AppCompatActivity {
                             Bitmap bmp2 = BitmapFactory.decodeStream(in2);
                             int newWidth2 = metrics.widthPixels / 3 - 15;
                             Bitmap newbitMap2 = Bitmap.createScaledBitmap(bmp2, newWidth2, newWidth2, true);
-                            m2.image = newbitMap2;
+                            m2.image = bmp2; // newbitMap2;
                         }
 
                         if (a1.item3.thumbnailFileName != null) {
@@ -387,7 +387,7 @@ public class ShareActivity extends AppCompatActivity {
                             Bitmap bmp3 = BitmapFactory.decodeStream(in3);
                             int newWidth3 = metrics.widthPixels / 3 - 15;
                             Bitmap newbitMap3 = Bitmap.createScaledBitmap(bmp3, newWidth3, newWidth3, true);
-                            m3.image = newbitMap3;
+                            m3.image = bmp3;  // newbitMap3;
                         }
                         s1.item1 = m1;
                         s1.item2 = m2;
@@ -496,7 +496,7 @@ public class ShareActivity extends AppCompatActivity {
 
                                     Bitmap newbitMap = Bitmap.createScaledBitmap(bmp, newWidth, newWidth, true);
 
-                                    data.image = newbitMap;
+                                    data.image = bmp; // newbitMap;
 
                                     k++;
 

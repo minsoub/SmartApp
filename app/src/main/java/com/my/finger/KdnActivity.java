@@ -1,8 +1,14 @@
 package com.my.finger;
 
+import android.app.Activity;
 import android.arch.lifecycle.LifecycleObserver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -31,7 +37,7 @@ import java.io.IOException;
  * 사진 촬영 메인 페이지
  *
  */
-public class KdnActivity extends AppCompatActivity implements LifecycleObserver  {
+public class KdnActivity extends AppCompatActivity implements SensorEventListener { // LifecycleObserver  {
     private static String TAG = "KDN_TAG";
     private static KdnPreview surfaceView;
     private SurfaceHolder holder;
@@ -45,6 +51,14 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
     private static Context mContext;
     private static int zoom = 0;
     private static String init = "0";
+    private static int mOrientation;
+
+    private SensorManager mSensorManager;
+    private Sensor mRotationSensor;
+
+    private static final int SENSOR_DELAY = 500 * 1000; // 500ms
+    private static final int RADIAN_TO_DEGREE = -57;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +73,10 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
 
+        mSensorManager = (SensorManager) getSystemService(Activity.SENSOR_SERVICE);
+        mRotationSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
+        mSensorManager.registerListener(this, mRotationSensor, SENSOR_DELAY);
 
         setInit();
         // 안드로이드 6.0 이상 버전에서는 CAMERA 권한 허가를 요청한다.
@@ -112,6 +129,11 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
 //        }
     }
 
+    /**
+     * 이미지 갭쳐한 데이터를 파일로 저장한다.
+     *
+     * @param data
+     */
     public static void setByteImage(byte[] data)
     {
         FileOutputStream outStream = null;
@@ -348,5 +370,81 @@ public class KdnActivity extends AppCompatActivity implements LifecycleObserver 
             return;
         }
 
+    }
+//    @Override
+//    public void onConfigurationChanged(Configuration newConfig) {
+//        super.onConfigurationChanged(newConfig);
+//        Log.d(TAG , "onConfigurationChanged");
+//        if(newConfig.orientation == Configuration.ORIENTATION_PORTRAIT){//세로 전환시
+//            mOrientation = 90;
+//            Log.d(TAG , "Configuration.ORIENTATION_PORTRAIT");
+//        }else if(newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE){ //가로전환시
+//            Log.d(TAG, "Configuration.ORIENTATION_LANDSCAPE");
+//            mOrientation = 180;
+//        }else{
+//            mOrientation = 90;
+//        }
+//    }
+//
+    public int getOrientation() {
+        return mOrientation;
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+        // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor == mRotationSensor) {
+            if (event.values.length > 4) {
+                float[] truncatedRotationVector = new float[4];
+                System.arraycopy(event.values, 0, truncatedRotationVector, 0, 4);
+                checkOrientation(truncatedRotationVector);
+            } else {
+                checkOrientation(event.values);
+            }
+        }
+    }
+
+    private void checkOrientation(float[] vectors) {
+        float[] rotationMatrix = new float[9];
+        SensorManager.getRotationMatrixFromVector(rotationMatrix, vectors);
+        int axisX = SensorManager.AXIS_X;
+        int axisZ = SensorManager.AXIS_Z;
+        float[] adjustedRotationMatrix = new float[9];
+        SensorManager.remapCoordinateSystem(rotationMatrix, axisX, axisZ, adjustedRotationMatrix);
+        float[] orientation = new float[3];
+        SensorManager.getOrientation(adjustedRotationMatrix, orientation);
+        float azimuch = orientation[0] * RADIAN_TO_DEGREE;
+        float pitch = orientation[1] * RADIAN_TO_DEGREE;
+        float roll = orientation[2] * RADIAN_TO_DEGREE;
+
+//        ((TextView)findViewById(R.id.azimuth)).setText("Azimuch: "+azimuch);
+//        ((TextView)findViewById(R.id.pitch)).setText("Pitch: "+pitch);
+//        ((TextView)findViewById(R.id.roll)).setText("Roll: "+roll);
+        if(Math.abs(55) > pitch) {
+            calculateOrientation((int) roll, (int) pitch);
+            //((TextView) findViewById(R.id.orientation)).setText(calculateOrientation((int) roll, (int) pitch));
+
+
+        }
+    }
+
+    private String calculateOrientation(int roll, int pitch) {
+        if((-120 < roll && roll < -60) || (60 < roll && roll <120)){
+            if (-120 < roll && roll < -60) mOrientation = 180;
+            else mOrientation = 0;
+
+            //surfaceView.setRotation(mOrientation);
+            return "LANDSCAPE " + roll + "/" + pitch;
+        }else if(( -30 < roll && roll < 30) || (150 < roll && roll < 180) || (-180 < roll && roll < -150)){
+            mOrientation = 90;
+            //surfaceView.setRotation(mOrientation);
+            return "PORTRAIT " + roll + "/" + pitch;
+        }else{
+            return "UNKNOWN " + roll + "/" + pitch;
+        }
     }
 }

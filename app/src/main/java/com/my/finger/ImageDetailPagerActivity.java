@@ -16,10 +16,16 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
+import android.view.KeyEvent;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,13 +43,17 @@ import com.my.finger.utils.UploadUtil;
 import java.io.File;
 import java.util.ArrayList;
 
+/**
+ * 사진 전송에서 상세 이미지 보기
+ *
+ */
 public class ImageDetailPagerActivity extends AppCompatActivity {
     private DataBaseUtil mDB;
     private ProgressDialog dialog = null;
     private final String TAG = "KDN_TAG";
     private int serverResponseCode = 0;
 
-    private TextView mtxtView;
+    private EditText mtxtView;
 
     private SendDetailPagerAdapter adapter;
     private ViewPager viewPager;
@@ -78,6 +88,7 @@ public class ImageDetailPagerActivity extends AppCompatActivity {
             }
         };
 
+
         // 버튼 이벤트 리스너
         ImageView btnDelete = findViewById(R.id.btnDelete);
         btnDelete.setOnClickListener(onClickListener);
@@ -85,10 +96,36 @@ public class ImageDetailPagerActivity extends AppCompatActivity {
         ImageView btnSend = findViewById(R.id.btnSend);
         btnSend.setOnClickListener(onClickListener);
         mtxtView = findViewById(R.id.send_title);
+        mtxtView.setInputType(EditorInfo.TYPE_NULL);
+        mtxtView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ((EditText)view).setInputType(EditorInfo.TYPE_CLASS_TEXT); // setCursorVisible(true); 도 가능하다.
+            }
+        });
+        mtxtView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ( (event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER) )
+                {
+                    InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mtxtView.getWindowToken(), 0);
+                    mtxtView.setInputType(EditorInfo.TYPE_NULL);
+                    Log.d(TAG, "Editable change complated....");
+
+                    // 파일이름 변경 해야 한다.
+
+                    return true;
+                }else {
+                    return false;
+                }
+            }
+        });
 
         setImageLayout();
 
         viewPager = (ViewPager) findViewById(R.id.viewPager);
+
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
 
             @Override

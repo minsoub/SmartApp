@@ -87,7 +87,7 @@ public class SharePagerAdapter  extends PagerAdapter {
                 Bitmap bmp = BitmapFactory.decodeStream(in);
                 //imageView.setImageBitmap(bmp);
                 Bitmap bitmap = Bitmap.createScaledBitmap(bmp, size.x, size.y, true);
-                imageView.setImageBitmap(bitmap);
+                imageView.setImageBitmap(bmp);
 
                 // Textbox에 넣을 타이틀과 버튼 명령시 삭제할 키, 삭제이후 index제거를 위한 position을 넘겨준다.
                // ((SharePagerActivity)mContext).setCurrentImage(mList.get(position).oriFileName, mList.get(position).imageSeqno, position);

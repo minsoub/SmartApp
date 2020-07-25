@@ -31,7 +31,8 @@
         </activity>
         <activity
             android:name=".KdnActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            />
         <activity
             android:name=".ImagePreivewActivity"
             android:screenOrientation="portrait" />
@@ -40,7 +41,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".ImageDetailPagerActivity"
-            android:screenOrientation="portrait" />
+            />
         <activity
             android:name=".LoginActivity"
             android:screenOrientation="portrait" />

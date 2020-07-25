@@ -42,7 +42,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/smail_title"
             android:gravity="center_horizontal"
-            android:text="현장 사진 전송" />
+            android:text="사진 전송" />
     </android.support.constraint.ConstraintLayout>
 
 
@@ -170,7 +170,7 @@
                 android:layout_marginRight="20dp"
                 android:contentDescription="@string/title1"
                 android:scaleType="centerCrop"
-                android:src="@mipmap/ico_gnbmn03"
+                android:src="@mipmap/menu_03"
                 android:layout_marginTop="23dp"
                 android:adjustViewBounds="true"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -186,7 +186,7 @@
                 android:gravity="center_horizontal"
                 android:textSize="16dp"
                 android:textStyle="bold"
-                android:text="사진 공유"
+                android:text="사진 조회"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/btnShare"
                 app:layout_constraintStart_toStartOf="@+id/btnShare"

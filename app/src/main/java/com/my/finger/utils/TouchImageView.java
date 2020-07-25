@@ -5,6 +5,7 @@ import android.graphics.Matrix;
 import android.graphics.PointF;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.widget.ImageView;
@@ -68,11 +69,15 @@ public class TouchImageView extends ImageView {
 
         float width = getMeasuredWidth();
         float height = getMeasuredHeight();
+
+        Log.d(TAG, "bm width : " + bmWidth + ", height : " + bmHeight + ", MeasuredWidth w : " + width + ", h : " + height);
+
         float scale = 1;
 
         // If image is bigger then display fit it to screen.
         if (width < bmWidth || height < bmHeight) {
             scale = width > height ? height / bmHeight : width / bmWidth;
+            //scale = height / bmHeight;
         }
 
         mMatrix.setScale(scale, scale);

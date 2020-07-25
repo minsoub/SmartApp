@@ -58,8 +58,8 @@ public class SendDetailPagerAdapter   extends PagerAdapter {
             mDisplay.getSize(size);
 
             Bitmap bitmap = BitmapFactory.decodeFile(mFileName.get(position).toString());
-            Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap, size.x, size.y, true);
-            imageView.setImageBitmap(newbitMap);
+            //Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap, size.x, size.y, true);
+            imageView.setImageBitmap(bitmap);
            // ((ImageDetailPagerActivity)mContext).setCurrentImage(mFileName.get(position), mFileKey.get(position), position);
         }
         container.addView(view);

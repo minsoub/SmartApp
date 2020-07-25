@@ -12,6 +12,7 @@
         android:layout_marginTop="0dp"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"
+        android:background="#100D0D"
         android:scaleType="matrix" />
 
 </android.support.constraint.ConstraintLayout>

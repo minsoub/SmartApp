@@ -52,9 +52,9 @@ public class ImagePreivewActivity extends AppCompatActivity  {
                 Log.d(TAG, "File isn't exists....");
             }
 
-            Bitmap bitmap = BitmapFactory.decodeFile(mFileName);
+            Bitmap newbitMap = BitmapFactory.decodeFile(mFileName);
             //int newWidth = metrics.widthPixels;
-            Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap,  size.x, size.y, true);
+            //Bitmap newbitMap = Bitmap.createScaledBitmap(bitmap,  size.x, size.y, true);
 
 
             if (newbitMap == null)
