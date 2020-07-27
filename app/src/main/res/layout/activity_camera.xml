@@ -92,75 +92,29 @@
                     android:text=""/>
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/btnZoom1"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@mipmap/btn_cam_shoot"
-                android:layout_marginRight="38dp"
-                app:layout_constraintRight_toLeftOf="@+id/btnZoom2"
-                app:layout_constraintBottom_toTopOf="@+id/btnShut"
-                />
             <TextView
-                android:id="@+id/text1"
-                android:layout_width="20pt"
+                android:id="@+id/seek_title"
+                android:layout_width="30pt"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:layout_marginBottom="15dp"
+                android:layout_marginBottom="5dp"
                 android:textColor="#ffffff"
-                android:textSize="10dp"
+                android:textSize="12dp"
                 android:gravity="center_horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/btnZoom1"
-                app:layout_constraintStart_toStartOf="@+id/btnZoom1"
-                app:layout_constraintTop_toBottomOf="@+id/btnZoom1"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/zoombar"
                 android:text="X 1.0" />
 
-            <ImageView
-                android:id="@+id/btnZoom2"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:src="@mipmap/btn_cam_shoot"
+            <SeekBar
+                android:id="@+id/zoombar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/btnShut"
-                />
-            <TextView
-                android:id="@+id/text2"
-                android:layout_width="20pt"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="#ffffff"
-                android:textSize="10dp"
-                android:gravity="center_horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/btnZoom2"
-                app:layout_constraintStart_toStartOf="@+id/btnZoom2"
-                app:layout_constraintTop_toBottomOf="@+id/btnZoom2"
-                android:text="X 2.0" />
-
-            <ImageView
-                android:id="@+id/btnZoom3"
-                android:layout_width="25dp"
-                android:layout_height="25dp"
-                android:layout_marginLeft="38dp"
-                android:src="@mipmap/btn_cam_shoot"
-                app:layout_constraintLeft_toRightOf="@+id/btnZoom2"
-                app:layout_constraintBottom_toTopOf="@+id/btnShut"
-                />
-            <TextView
-                android:id="@+id/text3"
-                android:layout_width="20pt"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:layout_marginBottom="5dp"
-                android:textColor="#ffffff"
-                android:textSize="10dp"
-                android:gravity="center_horizontal"
-                app:layout_constraintEnd_toEndOf="@+id/btnZoom3"
-                app:layout_constraintStart_toStartOf="@+id/btnZoom3"
-                app:layout_constraintTop_toBottomOf="@+id/btnZoom3"
-                android:text="X 4.0" />
-
+                android:min="0"
+                android:max="50" />
 
             <ImageView
                 android:id="@+id/btnShut"

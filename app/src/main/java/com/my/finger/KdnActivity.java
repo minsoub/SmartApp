@@ -24,6 +24,8 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.my.finger.utils.CommonUtil;
@@ -59,6 +61,7 @@ public class KdnActivity extends AppCompatActivity implements SensorEventListene
     private static final int SENSOR_DELAY = 500 * 1000; // 500ms
     private static final int RADIAN_TO_DEGREE = -57;
 
+    private static TextView seekText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -214,22 +217,22 @@ public class KdnActivity extends AppCompatActivity implements SensorEventListene
                 android.hardware.Camera.Parameters params;
                 switch (view.getId())
                 {
-                    case R.id.btnZoom1:
-                        params=mCamera.getParameters();
-                        params.setZoom(0);
-                        mCamera.setParameters(params);
-
-                        break;
-                    case R.id.btnZoom2:
-                        params=mCamera.getParameters();
-                        params.setZoom(15);
-                        mCamera.setParameters(params);
-                        break;
-                    case R.id.btnZoom3:
-                        params=mCamera.getParameters();
-                        params.setZoom(20);
-                        mCamera.setParameters(params);
-                        break;
+//                    case R.id.btnZoom1:
+//                        params=mCamera.getParameters();
+//                        params.setZoom(0);
+//                        mCamera.setParameters(params);
+//
+//                        break;
+//                    case R.id.btnZoom2:
+//                        params=mCamera.getParameters();
+//                        params.setZoom(15);
+//                        mCamera.setParameters(params);
+//                        break;
+//                    case R.id.btnZoom3:
+//                        params=mCamera.getParameters();
+//                        params.setZoom(20);
+//                        mCamera.setParameters(params);
+//                        break;
                     case R.id.btnShut:
                         // get an image from the camera
                         CheckBox checkBox = (CheckBox) findViewById(R.id.set_check);
@@ -267,18 +270,48 @@ public class KdnActivity extends AppCompatActivity implements SensorEventListene
             }
         };
         // 각 버튼에 대한 이벤트 리스터를 지정한다.
-        ImageView btnZoom1 = (ImageView)findViewById(R.id.btnZoom1);
-        btnZoom1.setOnClickListener(onClickListener);
-        ImageView btnZoom2 = (ImageView)findViewById(R.id.btnZoom2);
-        btnZoom2.setOnClickListener(onClickListener);
-        ImageView btnZoom3 = (ImageView)findViewById(R.id.btnZoom3);
-        btnZoom3.setOnClickListener(onClickListener);
+//        ImageView btnZoom1 = (ImageView)findViewById(R.id.btnZoom1);
+//        btnZoom1.setOnClickListener(onClickListener);
+//        ImageView btnZoom2 = (ImageView)findViewById(R.id.btnZoom2);
+//        btnZoom2.setOnClickListener(onClickListener);
+//        ImageView btnZoom3 = (ImageView)findViewById(R.id.btnZoom3);
+//        btnZoom3.setOnClickListener(onClickListener);
         ImageView btnShut = (ImageView)findViewById(R.id.btnShut);
         btnShut.setOnClickListener(onClickListener);
         ImageView btnFlash = (ImageView)findViewById(R.id.btnFlash);
         btnFlash.setOnClickListener(onClickListener);
         ImageView btnSet = (ImageView)findViewById(R.id.btnSet);
         btnSet.setOnClickListener(onClickListener);
+
+        seekText = (TextView)findViewById(R.id.seek_title);
+
+        SeekBar seekBar = (SeekBar)findViewById(R.id.zoombar);
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            android.hardware.Camera.Parameters params;
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                double data = 1.0 + (double)(progress/10.0);
+                setText(String.valueOf(data));
+                params=mCamera.getParameters();
+                params.setZoom(seekBar.getProgress());
+                mCamera.setParameters(params);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                double data = 1.0 + (double)(seekBar.getProgress()/10.0);
+                setText(String.valueOf(data));
+                params=mCamera.getParameters();
+                params.setZoom(seekBar.getProgress());
+                mCamera.setParameters(params);
+            }
+        });
 
         mContext = this;
 
@@ -292,6 +325,11 @@ public class KdnActivity extends AppCompatActivity implements SensorEventListene
                 surfaceView.setName(true);
             }
         }
+    }
+
+    public void setText(String data)
+    {
+        seekText.setText("X "+data);
     }
 
     /**
